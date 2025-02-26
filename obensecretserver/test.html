@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Texture Data Fetcher</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+        .output {
+            margin-top: 20px;
+        }
+        .output div {
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Texture Data Extractor</h1>
+    <button id="fetchButton">Fetch Texture Data</button>
+
+    <div class="output">
+        <div><strong>Custom:</strong> <span id="isCustom"></span></div>
+        <div><strong>Slim:</strong> <span id="isSlim"></span></div>
+        <div><strong>Skin URL:</strong> <span id="skinUrl"></span></div>
+        <div><strong>Skin Data:</strong> <span id="skinData"></span></div>
+    </div>
+
+    <canvas id="canvas"></canvas>
+
+    <script type="module" src=" index.js"></script>
+
+
+    <script>
+        const jsonUrl = 'https://api.ashcon.app/mojang/v2/user/dithskii'; // Replace with the URL of the JSON response
+
+        document.getElementById('fetchButton').addEventListener('click', () => {
+            fetch(jsonUrl)
+                .then(response => response.json())  // Parse the JSON response
+                .then(data => {
+                    // Extract values from the 'textures' object
+                    const isCustom = data.textures.custom;
+                    const isSlim = data.textures.slim;
+                    const skinUrl = data.textures.skin.url;
+                    const skinData = data.textures.skin.data;
+
+                    // Display values on the webpage
+                    document.getElementById('isCustom').textContent = isCustom;
+                    document.getElementById('isSlim').textContent = isSlim;
+                    document.getElementById('skinUrl').textContent = skinUrl;
+                    document.getElementById('skinData').textContent = skinData;
+                })
+                .catch(error => {
+                    console.error('Error fetching the JSON:', error);
+                });
+        });
+        </script>
+
+</body>
+</html>
