@@ -2,23 +2,120 @@
 <html>
 <head>
     <style>
-@import url('https://fonts.googleapis.com/css2?family=Ubuntu+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap');        .secret-smp-container {
-            border-radius: 2em;
-            border: 5px solid black; /* Corrected border property */
-            padding: 0px; /* Added padding for better visual appearance */
-            height: fit-content;
-            width: fit-content;
-            padding-left: 0.5em;
-            padding-right: 0.5em;
-            padding-bottom: 0.2em;
-        }
-        .secret-smp-text {
-            font-family: "Ubuntu Mono", monospace;
-            font-weight: 700;
-            font-style: normal;
-            font-size: 16px;
-            padding: 0px;
-        }
+@import url('https://fonts.googleapis.com/css2?family=Ubuntu+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap');
+.secret-smp-container {
+    border-radius: 2em;
+    border: 5px solid black; /* Corrected border property */
+    padding: 0px; /* Added padding for better visual appearance */
+    height: fit-content;
+    width: fit-content;
+    padding-left: 0.5em;
+    padding-right: 0.5em;
+    padding-bottom: 0.2em;
+}
+.secret-smp-text {
+    font-family: "Ubuntu Mono", monospace;
+    font-weight: 700;
+    font-style: normal;
+    font-size: 16px;
+    padding: 0px;
+}
+
+body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background-color: #e0e0e0;
+  font-family: 'Seurat', sans-serif;
+  gap: 20px;
+}
+
+.wii-button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 1rem 2rem;
+  border-radius: 2rem;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  position: relative;
+  border: none;
+  font-size: 1.2rem;
+}
+
+.wii-button:hover {
+  transform: scale(1.05);
+}
+
+.wii-button:active {
+  transform: scale(0.95);
+}
+
+.wii-button::before {
+  content: '';
+  position: absolute;
+  top: 0.4rem;
+  left: 0.4rem;
+  width: 60%;
+  height: 30%;
+  border-radius: 50%;
+  opacity: 0.7;
+  filter: blur(0.5rem);
+}
+
+.wii-button::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 2rem;
+  pointer-events: none;
+}
+
+.light-mode {
+  background-color: #f0f7fa;
+  box-shadow: inset 0 -0.3rem 0.5rem #87bfd8, 0 0.2rem 0.3rem rgba(0, 0, 0, 0.1);
+  color: #0470e3;
+}
+
+.light-mode:hover {
+  box-shadow: inset 0 -0.3rem 0.5rem #87bfd8, 0 0.4rem 0.5rem rgba(0, 0, 0, 0.2);
+}
+
+.light-mode:active {
+  box-shadow: inset 0 -0.1rem 0.2rem #87bfd8, 0 0.1rem 0.2rem rgba(0, 0, 0, 0.2);
+}
+
+.light-mode::before {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.6), rgba(255, 255, 255, 0));
+}
+
+.light-mode::after {
+  border: 0.1rem solid #42a5f5;
+}
+
+.dark-mode {
+  background-color: #2a2a2a;
+  box-shadow: inset 0 -0.3rem 0.5rem #0e3449, 0 0.2rem 0.3rem rgba(0, 0, 0, 0.4);
+  color: #fff;
+}
+
+.dark-mode:hover {
+  box-shadow: inset 0 -0.3rem 0.5rem #0e3449, 0 0.4rem 0.5rem rgba(0, 0, 0, 0.5);
+}
+
+.dark-mode:active {
+  box-shadow: inset 0 -0.1rem 0.2rem #0e3449, 0 0.1rem 0.2rem rgba(0, 0, 0, 0.2);
+}
+
+.dark-mode::before {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0));
+  opacity: 0.5;
+}
+
+.dark-mode::after {
+  border: 0.1rem solid #80d1ff;
+}
     </style>
     
 </head>
@@ -26,5 +123,7 @@
     <div class="secret-smp-container">
         <div class="secret-smp-text">Secret SMP<sup>®</sup></div>
     </div>
+
+    <button class="wii-button light-mode">Press Me</button>
 </body>
 </html>
