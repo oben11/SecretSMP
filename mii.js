@@ -51,14 +51,16 @@ class MinecraftMii {
 
   // ... (rest of your methods: walk, setSkin, etc.) ...
   walk(x, y) {
-    anime.remove(this.canvas);
+    anime.remove(this.canvas); // removes animation when new move function is called
     this.Walking(true);
-    const newRotation = this.calculateRotation(x, y);
+    const newRotation = this.calculateRotation(x, y); // calculate new rotation
     this.setRotation(newRotation, 400);
     const rect = this.canvas.getBoundingClientRect();
 
     const currentX = rect.left + rect.width / 2;
     const currentY = rect.top + rect.height / 2;
+
+
     anime({
       targets: this.canvas,
       left: x,
