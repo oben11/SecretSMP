@@ -16,7 +16,7 @@ class MinecraftMii {
       skin: null,
       cape: null,
       model: "slim",
-      zoom: 0.5,
+      zoom: 1,
       fov: 15,
       rotateButton: true,
       panButton: true,
@@ -39,9 +39,11 @@ class MinecraftMii {
       this.viewer.playerObject.rotation.x = -Math.PI / 6;
 
       // Increase head scale
-      this.viewer.playerObject.head.position.x = 2;
-      this.viewer.playerObject.head.scale.y = 2;
-      this.viewer.playerObject.head.scale.z = 2;
+      this.viewer.playerObject.skin.head.scale.x = 1.3;
+      this.viewer.playerObject.skin.head.scale.y = 1.3;
+      this.viewer.playerObject.skin.head.scale.z = 1.3;
+
+
 
       this.viewer.render(); // Important: Render the changes!
     });
