@@ -42,6 +42,7 @@
     const image = skinViewer.canvas.toDataURL();
 
     const imgElement = document.createElement("img");
+
     imgElement.src = image;
     imgElement.width = skinViewer.width;
     imgElement.height = skinViewer.height;
@@ -51,16 +52,18 @@
     imgElement.style.zIndex = zIndex;
     imgElement.style.scale = 1.5 / (scaleFactor);
 
+    imgElement.class = "Char";
+
+
     document.getElementById("mosaic").appendChild(imgElement);
 
 
     offsetX += 110; 
   }
-
   skinViewer.dispose();
 
   anime({
-    targets: 'img',
+    targets: "img",
     translateY: [
       { value: 2, duration: 1000 },
       { value: 0, duration: 1000 }
@@ -72,4 +75,5 @@
       return Math.random() * 2000; // Random delay up to 2 seconds
     }
   });
+
 })();

@@ -5,20 +5,24 @@ function pause(milliseconds) {
 }
 
 document.addEventListener("DOMContentLoaded", function() {
-  const miiInstances = {}; // Store Mii instances in an object
 
-  const numMiis = 5; // Number of Miis to create
+  const numMiis = 12; // Number of Miis to create
+  const miiInstances = [numMiis];
+
+
+
 
   for (let i = 0; i < numMiis; i++) {
+    console.log("Creating Mii instance");
     const canvasId = `miiCanvas${i + 1}`;
     const myMii = new MinecraftMii(canvasId);
 
     // Generate random skin URLs or use a predefined list
     const skins = [
-      "https://minotar.net/skin/steve",
-      "https://minotar.net/skin/alex",
-      "https://minotar.net/skin/notch",
-      "https://minotar.net/skin/jeb_",
+      "https://minotar.net/skin/dithskii",
+      "https://minotar.net/skin/timmprice",
+      "https://minotar.net/skin/drfroyo",
+      "https://minotar.net/skin/rockooby",
       // Add more skin URLs as needed
     ];
     const skinUrl = skins[Math.floor(Math.random() * skins.length)]; // Random skin selection
@@ -27,15 +31,22 @@ document.addEventListener("DOMContentLoaded", function() {
     myMii.setSize(150, 200);
     myMii.setZoom(1);
 
-    myMii.walk(Math.random() * 800, Math.random() * 600); // Random walk positions
+    const row = Math.floor(i / Math.floor(window.innerWidth / 150));
+    const col = i % Math.floor(window.innerWidth / 150);
 
+    myMii.canvas.style.position = "absolute";
+    myMii.canvas.style.left = `${col * 150}px`;
+    myMii.canvas.style.top = `${row * 200}px`;
+
+    //myMii.walk(Math.random() * 800, Math.random() * 600); // Random walk positions
+    
     miiInstances[canvasId] = myMii; // Store the Mii instance with its canvas ID as the key
+    myMii.walk(100, 100);
   }
 
   // Example: Accessing and manipulating individual Miis after creation
   setTimeout(() => {
     if (miiInstances["miiCanvas1"]) {
-      miiInstances["miiCanvas1"].walk(100, 100); // Move the first Mii
     }
 
     if(miiInstances["miiCanvas3"]){
@@ -47,7 +58,7 @@ document.addEventListener("DOMContentLoaded", function() {
       if (miiInstances.hasOwnProperty(canvasId)) {
         // do something to each mii.
         console.log(canvasId);
-        //miiInstances[canvasId].walk(0, 0); // Move all miis to 0,0.
+        miiInstances[canvasId].walk(0, 0); // Move all miis to 0,0.
       }
     }
 

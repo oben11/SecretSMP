@@ -1,20 +1,15 @@
-/*
-TODO
-When Click on Mii it stops everything looks at you and head gets twice the size
-*/
-
 class MinecraftMii {
   constructor(canvasId) {
+    // Create and attach canvas
     this.canvas = document.createElement('canvas');
     this.canvas.id = canvasId;
     document.body.appendChild(this.canvas);
 
+    // Initialize SkinViewer
     this.viewer = new skinview3d.SkinViewer({
       canvas: this.canvas,
       width: 300,
       height: 400,
-      skin: null,
-      cape: null,
       model: "slim",
       zoom: 1,
       fov: 15,
@@ -22,56 +17,68 @@ class MinecraftMii {
       panButton: true,
     });
 
-    this.viewer.camera.position.x = 0;
-    this.viewer.camera.position.y = 15;
-    this.viewer.camera.position.z = 15;
+    this.viewer.controls.enableZoom = false;
+    this.viewer.controls.enableRotate = false;
+    this.viewer.controls.enablePan = false;
+    // Aliases for easier access
+    this.player = this.viewer.playerObject;
+    this.head = this.player.skin.head;
+    this.animations = this.viewer.animations;
+    this.camera = this.viewer.camera;
 
-    this.viewer.camera.rotation.x = -2;
-    this.viewer.camera.rotation.y = 0;
-    this.viewer.camera.rotation.z = 0;
+    // Setup camera
+    this.camera.position.set(0, 15, 15);
+    this.camera.rotation.set(-2, 0, 0);
+ 
+    // Setup click interaction
+    this.canvas.addEventListener('click', () => this.reactToClick());
+  }
+  
 
-    // Add the event listener inside the constructor
-    this.canvas.addEventListener('click', () => {
-      console.log("hello!");
+  // === EVENT REACTIONS ===
+  reactToClick() {
+    console.log("hello!");
 
-      // Reset orientation/rotation
-      this.viewer.playerObject.rotation.y = 0;
-      this.viewer.playerObject.rotation.x = -Math.PI / 6;
+    //this.setRotation((2 * Math.PI), 500);
 
-      // Increase head scale
-      this.viewer.playerObject.skin.head.scale.x = 1.3;
-      this.viewer.playerObject.skin.head.scale.y = 1.3;
-      this.viewer.playerObject.skin.head.scale.z = 1.3;
+    setTimeout(() => {
+      //this.returnHome();
+      this.stareAtCursor();
 
+    }, 100); // Delay of 100ms
 
 
-      this.viewer.render(); // Important: Render the changes!
-    });
+
+
+
+    //this.rotateArmsSineWave(0.15, 1.5, 5000); // Rotate arms in a sine wave pattern
+    //this.viewer.animation = null;
+    
+    //this.faceForward();
+    //this.scaleHead(1.3); 
+    //this.viewer.render();
   }
 
-  // ... (rest of your methods: walk, setSkin, etc.) ...
-  walk(x, y) {
-    anime.remove(this.canvas); // removes animation when new move function is called
-    this.Walking(true);
-    const newRotation = this.calculateRotation(x, y); // calculate new rotation
-    this.setRotation(newRotation, 400);
-    const rect = this.canvas.getBoundingClientRect();
+  // === HELPER METHODS ===
+  faceForward() {
+  }
 
-    const currentX = rect.left + rect.width / 2;
-    const currentY = rect.top + rect.height / 2;
+  startPosition(x, y) {
+    this.home = { x, y };
+    this.canvas.style.left = `${x}px`;
+    this.canvas.style.top = `${y}px`;
+  }
+  returnHome() {
+    this.walk(this.home.x, this.home.y);
+  }
 
+  cancelAnimation() {
+    this.Walking(false);
+    anime.remove(this.canvas); // Stop current movement
+  }
 
-    anime({
-      targets: this.canvas,
-      left: x,
-      top: y,
-      duration: Math.abs((currentX - x + (currentY - y)) * 5),
-      easing: 'linear',
-      complete: () => {
-        this.Walking(false);
-        this.viewer.playerObject.rotation.y = newRotation;
-      },
-    });
+  scaleHead(factor) {
+    this.head.scale.set(factor, factor, factor);
   }
 
   setSkin(skinUrl) {
@@ -97,71 +104,130 @@ class MinecraftMii {
     this.viewer.render();
   }
 
-  startAnimation(animationName) {
-    this.viewer.animations.play(animationName);
-  }
-
-  stopAnimation() {
-    this.viewer.animations.reset();
-  }
-
   setRotation(degrees, duration) {
     this.animateCharacterRotation(degrees, duration);
   }
 
-  Walking(boolean) {
-    if (boolean) {
-      this.viewer.animation = new skinview3d.RunningAnimation();
-    } else {
-      this.viewer.animation = new skinview3d.IdleAnimation();
-    }
+  Walking(active) {
+    this.viewer.animation = active
+      ? new skinview3d.RunningAnimation()
+      : new skinview3d.IdleAnimation();
+  }
+
+  dispose() {
+    this.viewer.dispose();
+    this.canvas.remove();
+  }
+
+  stareAtCursor() {
+    const updateHeadRotation = (event) => {
+      const rect = this.canvas.getBoundingClientRect();
+      const canvasCenterX = rect.left + rect.width / 2;
+      const canvasCenterY = rect.top + rect.height / 2;
+
+      const deltaX = event.clientX - canvasCenterX;
+      const deltaY = canvasCenterY - event.clientY;
+
+      const angleX = -Math.atan2(deltaY, Math.abs(deltaX)) * 0.5;
+      const angleY = Math.atan2(deltaX, Math.abs(deltaY)) * 0.5;
+
+      //this.head.rotation.x = angleX;
+
+      this.head.rotation.y = angleY;
+    };
+
+    const mouseMoveListener = (event) => updateHeadRotation(event);
+
+    document.addEventListener('mousemove', mouseMoveListener);
+
+    setTimeout(() => {
+      document.removeEventListener('mousemove', mouseMoveListener);
+      this.head.rotation.set(0, 0, 0); // Reset head rotation
+    }, 5000);
+  }
+
+  walk(x, y) {
+    anime.remove(this.canvas); // Stop current movement
+    this.Walking(true);
+
+    const newRotation = this.calculateRotation(x, y);
+    this.setRotation(newRotation, 400);
+
+    const rect = this.canvas.getBoundingClientRect();
+    const currentX = rect.left + rect.width / 2;
+    const currentY = rect.top + rect.height / 2;
+
+    anime({
+      targets: this.canvas,
+      left: x,
+      top: y,
+      duration: Math.abs((currentX - x + (currentY - y)) * 5),
+      easing: 'linear',
+      complete: () => {
+        this.Walking(false);
+        this.player.rotation.y = newRotation;
+      },
+    });
+  }
+
+  rotateArmsSineWave(amplitude, frequency, duration) {
+    const startTime = performance.now();
+    const animate = (currentTime) => {
+      const elapsed = currentTime - startTime;
+      if (elapsed >= duration) {
+        this.player.skin.leftArm.rotation.z = 0;
+        this.player.skin.rightArm.rotation.z = 0;
+      } else {
+        const progress = elapsed / 1000; // Convert to seconds
+        const angle = amplitude * Math.sin(2 * Math.PI * frequency * progress);
+        this.player.skin.leftArm.rotation.y = angle;
+        this.player.skin.leftArm.rotation.x = angle;
+        this.player.skin.leftArm.rotation.z = (Math.PI * 0.05) + angle/4;
+
+
+        this.player.skin.rightArm.rotation.y = -angle;
+
+
+
+        requestAnimationFrame(animate);
+      }
+    };
+    requestAnimationFrame(animate);
   }
 
   calculateRotation(targetX, targetY) {
-    const canvas = this.canvas;
-
-    if (!canvas) {
-      console.error("Canvas element is not available.");
-      return 0;
-    }
-
-    const rect = canvas.getBoundingClientRect();
+    const rect = this.canvas.getBoundingClientRect();
     const currentX = rect.left + rect.width / 2;
     const currentY = rect.top + rect.height / 2;
-    console.log("CurrentX: " + currentX + "\nCurrentY: " + currentY);
 
     const deltaX = targetX - currentX;
-    const deltaY = - (targetY - currentY);
+    const deltaY = -(targetY - currentY);
 
-    let radians = Math.atan2(deltaY, deltaX);
-
-    const rotationOffset = Math.PI / 2;
-    radians += rotationOffset;
-
-    console.log("current direction: " + this.viewer.playerObject.rotation.y);
-    console.log("new direction: " + radians);
+    let radians = Math.atan2(deltaY, deltaX) + Math.PI / 2;
     return radians;
   }
 
   animateCharacterRotation(targetRadians, duration) {
     const startTime = performance.now();
-    const startRotationY = this.viewer.playerObject.rotation.y;
-    const object = this.viewer.playerObject;
-
+    const startRotationY = this.player.rotation.y; 
     let deltaRotation = targetRadians - startRotationY;
-
+    
+    
     deltaRotation = (deltaRotation + Math.PI) % (2 * Math.PI) - Math.PI;
 
-    function animate(currentTime) {
-      const elapsedTime = currentTime - startTime;
-      if (elapsedTime >= duration) {
-        object.rotation.y = targetRadians;
+    const animate = (currentTime) => {
+      const elapsed = currentTime - startTime;
+      if (elapsed >= duration) {
+        this.player.rotation.y = targetRadians;
       } else {
-        const progress = elapsedTime / duration;
-        object.rotation.y = startRotationY + deltaRotation * progress;
+        const progress = elapsed / duration;
+        this.player.rotation.y = startRotationY + deltaRotation * progress;
         requestAnimationFrame(animate);
       }
-    }
+    };
+
+
     requestAnimationFrame(animate);
   }
+
 }
