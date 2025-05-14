@@ -1,9 +1,20 @@
 import express from 'express';
 import fs from 'fs';
 import path from 'path';
+import { fileURLToPath } from 'url';
 
 const app = express();
 const PORT = 3000;
+
+const __filename = fileURLToPath(import.meta.url); // url of current module -> converts url to filepath
+const __dirname = path.dirname(__filename);        // get local directory portion
+
+// serve html and js
+app.use(express.static(path.join(__dirname, 'public')));
+
+app.get('/', function(req, res){
+    res.sendFile(__dirname + '/index.html');
+});
 
 // get skins from usernames.txt
 function getSkins() {
@@ -13,7 +24,7 @@ function getSkins() {
             .split('\n')
             .map(line => line.trim())
             .filter(Boolean);
-        return usernames.map(username => `https://minotar.net/avatar/${username}`);
+        return usernames.map(username => `https://minotar.net/skin/${username}`);
     } catch (error) {
         console.error('Error reading usernames.txt:', error); 
         return [];
