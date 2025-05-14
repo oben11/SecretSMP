@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Skin Viewer</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <h1>MC Skins</h1>
+  <div id="skins"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <script>
+    axios.get('/api/skins')
+      .then(res => {
+        const container = document.getElementById('skins');
+        res.data.forEach(url => {
+          const img = document.createElement('img');
+          img.src = url;
+          img.width = 64;
+          container.appendChild(img);
+        });
+      });
+  </script>
+</body>
+
