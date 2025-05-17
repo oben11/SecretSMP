@@ -12,6 +12,9 @@ const __dirname = path.dirname(__filename);        // get local directory portio
 // serve html and js
 app.use(express.static(path.join(__dirname, 'public')));
 
+// serve all of node_modules
+app.use('/node_modules', express.static(path.join(__dirname, 'node_modules')));
+
 // get skins from usernames.txt
 function getSkins() {
     const nameFilePath = path.join(process.cwd(), 'usernames.txt')
