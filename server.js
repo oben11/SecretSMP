@@ -9,6 +9,7 @@ const PORT = 3000;
 const __filename = fileURLToPath(import.meta.url); // url of current module -> converts url to filepath
 const __dirname = path.dirname(__filename);        // get local directory portion
 
+app.use(express.json());
 // serve html and js
 app.use(express.static(path.join(__dirname, 'public')));
 
@@ -30,6 +31,13 @@ function getSkins() {
 app.get('/api/skins', (req, res) => {
     const skins = getSkins();
     res.json(skins)
+});
+
+app.post('/api/active', (req, res) => {
+    console.log('Headers:', req.headers);
+    console.log('Parsed body:', req.body);
+    console.log('Body type:', typeof req.body);
+    res.sendStatus(200);
 });
 
 app.use(express.static('public'));
