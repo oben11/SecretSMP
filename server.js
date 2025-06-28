@@ -6,8 +6,8 @@ import { fileURLToPath } from 'url';
 const app = express();
 const PORT = 3000;
 
-const __filename = fileURLToPath(import.meta.url); // url of current module -> converts url to filepath
-const __dirname = path.dirname(__filename);        // get local directory portion
+const __filename = fileURLToPath(import.meta.url); 
+const __dirname = path.dirname(__filename);        
 
 app.use(express.json());
 // serve html and js
