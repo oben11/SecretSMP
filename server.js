@@ -28,16 +28,25 @@ function getSkins() {
     }
 }
 
+let currentPlayers = []
+
 app.get('/api/skins', (req, res) => {
     const skins = getSkins();
     res.json(skins)
 });
 
 app.post('/api/active', (req, res) => {
-    console.log('Headers:', req.headers);
-    console.log('Parsed body:', req.body);
-    console.log('Body type:', typeof req.body);
+    const { players } = req.body;
+        
+    if (!Array.isArray(players)) return res.status(400).send("Invalid json");
+
+    currentPlayers = players;
+    console.log(currentPlayers);
     res.sendStatus(200);
+});
+
+app.get('/api/active', (req, res) => {
+    res.json({ players: currentPlayers });
 });
 
 app.use(express.static('public'));
