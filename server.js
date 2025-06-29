@@ -6,9 +6,10 @@ import { fileURLToPath } from 'url';
 const app = express();
 const PORT = 3000;
 
-const __filename = fileURLToPath(import.meta.url); // url of current module -> converts url to filepath
-const __dirname = path.dirname(__filename);        // get local directory portion
+const __filename = fileURLToPath(import.meta.url); 
+const __dirname = path.dirname(__filename);        
 
+app.use(express.json());
 // serve html and js
 app.use(express.static(path.join(__dirname, 'public')));
 
@@ -30,9 +31,25 @@ function getSkins() {
     }
 }
 
+let currentPlayers = []
+
 app.get('/api/skins', (req, res) => {
     const skins = getSkins();
     res.json(skins)
+});
+
+app.post('/api/active', (req, res) => {
+    const { players } = req.body;
+        
+    if (!Array.isArray(players)) return res.status(400).send("Invalid json");
+
+    currentPlayers = players;
+    console.log(currentPlayers);
+    res.sendStatus(200);
+});
+
+app.get('/api/active', (req, res) => {
+    res.json({ players: currentPlayers });
 });
 
 app.use(express.static('public'));
