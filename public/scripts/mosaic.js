@@ -29,7 +29,19 @@
     }
 
 
-    const skinLink = `./skin.png`;
+let skinLink;
+try {
+  const response = await axios.get("/api/skins");
+  const skins = response.data;
+  const idx = Math.floor(Math.random() * skins.length);
+  skinLink = skins[idx];
+} catch (err) {
+  console.error("Error loading skins:", err);
+  continue; // skip this iteration if skin can't load
+}
+
+
+
     skinViewer.playerObject.skin.head.rotation.y = Math.random() * 0.9 - 0.6;
     skinViewer.playerObject.skin.head.rotation.x = Math.random() * 0.6 - 0.3;
     skinViewer.playerObject.skin.position.y = Math.random() * (5 - 0.8) + 0.5;

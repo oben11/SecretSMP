@@ -26,6 +26,9 @@ body {
   justify-content: center;
   align-items: center;
   min-height: 100vh;
+
+  overflow: hidden;
+  height: 100%;
   background-color: #fffcfc;
   font-family: 'Seurat', sans-serif;
   gap: 20px;
@@ -45,6 +48,11 @@ img {
   margin-bottom: -18%;
 }
 
+a {
+  text-decoration: none;
+
+}
+
 
 .wii-button {
   left:38%;
@@ -60,6 +68,7 @@ img {
   position: relative;
   border: none;
   font-size: 2rem;
+  
 }
 
 .wii-button:hover {
@@ -220,12 +229,13 @@ justify-content: center;
 }
 
 .logo {
-  position: fixed;
-  top: 30%;
-  left: 32%;
-  scale: 1.8;
+  scale: 1.5;
+  display: flex; /* Make parent a flex-container */
+  justify-content: center; /* Centers child horizontally */
+  align-items: center; /* Centers child vertically */
+  height: 100vh; /* Optional: Make the parent take up the full viewport height */
 }
 
 div.logo::before {
-   content:url(./mainlogo.png);
+   content:url(./media/image.png);
 }
