@@ -1,3 +1,4 @@
+
 (async function () {
   const skinViewer = new skinview3d.SkinViewer({
     width: 200,
@@ -11,21 +12,29 @@
   skinViewer.camera.rotation.y = 0;
   skinViewer.camera.rotation.z = 0;
 
-  zIndex=0;
-  rowCounter=0;
-  offsetY = 350;
+  zIndex = 0;
+  rows = 0;
+  rowIndex = 0;
+  perRow = 15;
+  offsetY = 20;
   offsetX = 0;
-  scaleFactor = 1;
+  scaleFactor = 1.7;
 
-  for (let i = 0; i < 180; i++) {
+  for (let i = 0; i < 170; i++) {
+    offsetX+=3;
+    rowIndex++;
+    if (rowIndex == Math.round(perRow)) {
+      console.log("New row");
+      console.log(perRow + "per row");
 
-    rowCounter++;
-    if (rowCounter == 13+(Math.round(Math.abs(zIndex)*1.2))) {
-      zIndex--;
-      rowCounter = 0;
-      offsetX=0-(Math.abs(zIndex)*5);
-      offsetY+=120;
-      scaleFactor+=0.1;
+      
+      rows+=1;
+      rowIndex = 0;
+      perRow+= 1 + (0.01* rows);
+      zIndex-=1;
+      offsetY+=10;
+      offsetX = 0;
+      scaleFactor-=0.2;
     }
 
 
@@ -58,11 +67,12 @@ try {
     imgElement.src = image;
     imgElement.width = skinViewer.width;
     imgElement.height = skinViewer.height;
+    imgElement.style.marginLeft = offsetX+"vw";
     imgElement.style.position = "absolute"; // Set position to absolute
-    imgElement.style.left = offsetX / scaleFactor + "px"; // Set left offset
-    imgElement.style.bottom = offsetY / scaleFactor + "px"; // Set top offset
+    imgElement.style.left = offsetX + "vw"; // Set left offset
+    imgElement.style.bottom = offsetY + "%"; // Set top offset
     imgElement.style.zIndex = zIndex;
-    imgElement.style.scale = 1.5 / (scaleFactor);
+    imgElement.style.scale = scaleFactor;
 
     imgElement.class = "Char";
 
@@ -70,7 +80,6 @@ try {
     document.getElementById("mosaic").appendChild(imgElement);
 
 
-    offsetX += 110; 
   }
   skinViewer.dispose();
 
