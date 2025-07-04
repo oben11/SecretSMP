@@ -6,9 +6,9 @@
     renderPaused: true,
   });
 
-  skinViewer.camera.position.y = 18;
+  skinViewer.camera.position.y = 15;
 
-  skinViewer.camera.rotation.x = -0.2;
+  skinViewer.camera.rotation.x = -0.1;
   skinViewer.camera.rotation.y = 0;
   skinViewer.camera.rotation.z = 0;
 
@@ -21,7 +21,7 @@
   scaleFactor = 1.7;
 
   for (let i = 0; i < 170; i++) {
-    offsetX+=3;
+    offsetX+=7;
     rowIndex++;
     if (rowIndex == Math.round(perRow)) {
       console.log("New row");
@@ -30,10 +30,10 @@
       
       rows+=1;
       rowIndex = 0;
-      perRow+= 1 + (0.01* rows);
+      perRow+= 2;
       zIndex-=1;
       offsetY+=10;
-      offsetX = 0;
+      offsetX =0;
       scaleFactor-=0.2;
     }
 

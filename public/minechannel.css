@@ -70,7 +70,7 @@
         }
 
         .wii-button {
-            left: 50%;
+            left: 48%;
             transform: translateX(-50%); /* Center horizontally */
             top: 20%;
             position: absolute; /* Changed to absolute to position within content-wrapper */
@@ -194,6 +194,7 @@
 
         .mii-display {
             position: absolute; /* Changed to absolute */
+            left: 0%;
             width: 100%;
             height: 100%;
             bottom: 5vh;
@@ -222,14 +223,14 @@
         .logo {
             /* content:url() is not reliable for main content. Better to use an <img> tag. 
                This is a placeholder div for the logo style. */
-            background-image: url('https://placehold.co/200x100/png?text=LOGO');
+            background-image: url("media/image.png"); /* Path to your logo image */
             background-repeat: no-repeat;
             background-size: contain;
             position: absolute;
             z-index: 999;
-            width: 200px; /* Example size */
-            height: 100px; /* Example size */
-            top: 5%;
+            width: 500px; /* Example size */
+            height: 250px; /* Example size */
+            top: 30%;
             left: 50%;
             transform: translateX(-50%);
         }
