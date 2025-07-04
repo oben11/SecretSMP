@@ -13,11 +13,15 @@
       <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 
     <script src="./scripts/mosaic.js"></script>
-    <style stylesheet="./minechannel.css"></style>
+    <script src="./scripts/pageTransition.js"></script>
+    <link rel="stylesheet" href="./minechannel.css">
+
 </head>
     <body>
-        
+    <div id="overlay" class="overlay"> </div>
+
     <div class="content-wrapper">
+
         <div class="mii-display">
           <div id="mosaic"></div>
         </div>
@@ -27,12 +31,13 @@
         <div class="scanlines"></div>
 
         <div class="buttons">
-            <a href = "channel.html"><button class="wii-button light-mode">Start</button></a>
+            <p href = "channel.html"><button id="toggleButton" class="wii-button light-mode">Start</button></p>
         </div>
 
         
         <div class="secret-smp-container">
         <div class="secret-smp-text">Secret SMP<sup>®</sup></div>
     </div>
+
     </body>
 </html>

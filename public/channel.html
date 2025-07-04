@@ -3,20 +3,28 @@
 <head>
   <meta charset="UTF-8">
   <title>Skin Viewer</title>
-  <link rel="stylesheet" href="styles.css">
+      <link rel="stylesheet" href="./minechannel.css">
   <script src="./scripts/main.js"></script>
   <script src="./scripts/mosaic.js"></script>
     <script src="./scripts/mii.js"></script>
+        <script src="./scripts/pageTransition.js"></script>
+
 
   <script src="/node_modules/skinview3d/bundles/skinview3d.bundle.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
 
 
+
+
+
 </head>
 <body>
+        <div id="overlay" class="overlay in"></div>
+
   <h1>MC Skins</h1>
   <div id="skins"></div>
 
+  <div id="overlay" class="overlay"></div>
 
   <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
   <script>

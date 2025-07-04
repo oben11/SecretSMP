@@ -3,9 +3,12 @@ function pause(milliseconds) {
 }
 
 document.addEventListener("DOMContentLoaded", function () {
+  let maxMiis = 16;
+  let counter = 0;
   axios.get("/api/skins").then((res) => {
     const miiInstances = {};
     res.data.forEach((url) => {
+      if (counter >= maxMiis) return; // Limit to maxMiis
       // Extract username from URL (e.g., https://minotar.net/skin/dithskii)
       const match = url.match(/\/skin\/([^/]+)/);
       const username = match ? match[1] : "unknown";
@@ -28,6 +31,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
       miiInstances[canvasId] = myMii;
       myMii.walk(1000, 500);
+      counter++;
     });
 
     // Example: Accessing and manipulating individual Miis after creation
