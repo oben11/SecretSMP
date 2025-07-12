@@ -1,4 +1,4 @@
-import * as skinview3d from 'https://cdn.jsdelivr.net/npm/skinview3d@3.1.0/+esm';
+import * as skinview3d from 'skinview3d';
 
 class MinecraftMii {
   constructor(canvasId) {

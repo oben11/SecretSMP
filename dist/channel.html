@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Skin Viewer</title>
+
+
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>    
+
+
+
+    <script type="module" crossorigin src="/assets/channel-BwJnfvM0.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/pageTransition-ChMQfhQ_.js">
+    <link rel="stylesheet" crossorigin href="/assets/pageTransition-fMc27Cip.css">
+  </head>
+  <body>
+
+    
+    <div id="overlay" class="overlay in"></div>
+    <canvas id="c"></canvas>
+
+    <div id="skins"></div>
+
+
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script>
+      axios.get("/api/skins").then((res) => {
+        const container = document.getElementById("skins");
+        res.data.forEach((url) => {
+          const img = document.createElement("img");
+          img.src = url;
+          img.width = 64;
+          container.appendChild(img);
+        });
+      });
+    </script>
+  </body>
+</html>

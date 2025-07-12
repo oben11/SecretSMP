@@ -1,5 +1,5 @@
 import { MinecraftMii } from "./mii.js";
-import axios from "../node_modules/axios/dist/esm/axios.js";
+import axios from "axios";
 
 function pause(milliseconds) {
   return new Promise((resolve) => setTimeout(resolve, milliseconds));

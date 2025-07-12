@@ -1,6 +1,6 @@
-import * as skinview3d from 'https://cdn.jsdelivr.net/npm/skinview3d@3.1.0/+esm'
-import axios from "../node_modules/axios/dist/esm/axios.js";
-import { animate, stagger } from "../node_modules/animejs/lib/anime.esm.js";
+import * as skinview3d from 'skinview3d'
+import axios from "axios";
+import { animate, stagger } from "animejs";
 
 
 (async function () {
@@ -87,4 +87,4 @@ animate('img', {
   ease: 'easeInOutSine', // 'easing' is now 'ease'
   delay: (el, i) => Math.random() * 2000 // Function-based delay remains similar
 });
-})();
+});

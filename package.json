@@ -1,16 +1,30 @@
 {
-  "name": "skinview3d",
-  "author": "",
+  "name": "secretsmp",
+  "author": "Oben",
   "license": "ISC",
+  "type": "module",
   "description": "",
+  "scripts": {
+    "dev:client": "vite",
+    "build:client": "vite build",
+    "start:server": "node server.js",
+    "dev": "concurrently \"npm run dev:client\" \"npm run start:server\"",
+    "build": "npm run build:client && NODE_ENV=production node server.js",
+    "preview": "vite preview"
+  },
   "dependencies": {
     "anime": "^0.1.2",
     "animejs": "^4.0.2",
     "axios": "^1.8.1",
-    "express": "^5.1.0",
+    "express": "^4.19.2",
     "fs": "^0.0.1-security",
     "https": "^1.0.0",
     "path": "^0.12.7",
     "skinview3d": "^3.1.0"
+  },
+  "devDependencies": {
+    "concurrently": "^9.2.0",
+    "glob": "^11.0.3",
+    "vite": "^7.0.4"
   }
 }

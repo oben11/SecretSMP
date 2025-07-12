@@ -1,14 +1,17 @@
-        // --- IMPORTS ---
+// --- IMPORTS ---
         
-        import * as THREE from '../node_modules/three/build/three.min.js';
-        import { OBJLoader } from '../node_modules/three/examples/jsm/loaders/OBJLoader.js';
+        import * as THREE from 'three';
+        import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader.js';
 
         // --- CONFIGURATION ---
         // This is where you can easily change the model and its behavior.
         const CONFIG = {
             // IMPORTANT: Replace this with the path to your own .obj file.
-            // Using the classic Utah Teapot model for this demo.
             modelUrl: '../media/goathorn.obj',
+
+            // Canvas size configuration
+            canvasWidth: 100, // Set your desired width here
+            canvasHeight: 100, // Set your desired height here
 
             // Initial orientation of the model (in radians).
             initialRotation: {
@@ -26,9 +29,9 @@
 
             // Scale factors for different interaction states.
             scale: {
-                default: 4.0, // Adjusted scale for the teapot model
-                hover: 4.5,
-                click: 3.5
+                default: 20.0, // Adjusted scale for the teapot model
+                hover: 25,
+                click: 20
             },
             
             // The "springiness" of the animations. Lower is slower/smoother.
@@ -52,7 +55,7 @@
 
             // Camera setup
             const fov = 45;
-            const aspect = window.innerWidth / window.innerHeight;
+            const aspect = CONFIG.canvasWidth / CONFIG.canvasHeight;
             const near = 0.1;
             const far = 1000;
             camera = new THREE.PerspectiveCamera(fov, aspect, near, far);
@@ -61,7 +64,7 @@
             // Renderer setup
             const canvas = document.querySelector('#c');
             renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
-            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setSize(CONFIG.canvasWidth, CONFIG.canvasHeight);
             renderer.setPixelRatio(window.devicePixelRatio);
 
             // Lighting
@@ -139,9 +142,9 @@
         }
 
         function onWindowResize() {
-            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.aspect = CONFIG.canvasWidth / CONFIG.canvasHeight;
             camera.updateProjectionMatrix();
-            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setSize(CONFIG.canvasWidth, CONFIG.canvasHeight);
         }
 
         function onMouseMove(event) {

@@ -1,0 +1,29 @@
+{
+  "_pageTransition-ChMQfhQ_.js": {
+    "file": "assets/pageTransition-ChMQfhQ_.js",
+    "name": "pageTransition",
+    "css": [
+      "assets/pageTransition-fMc27Cip.css"
+    ],
+    "assets": [
+      "assets/image-DY8xG64R.png"
+    ]
+  },
+  "_pageTransition-fMc27Cip.css": {
+    "file": "assets/pageTransition-fMc27Cip.css",
+    "src": "_pageTransition-fMc27Cip.css"
+  },
+  "channel.html": {
+    "file": "assets/channel-BwJnfvM0.js",
+    "name": "channel",
+    "src": "channel.html",
+    "isEntry": true,
+    "imports": [
+      "_pageTransition-ChMQfhQ_.js"
+    ]
+  },
+  "media/image.png": {
+    "file": "assets/image-DY8xG64R.png",
+    "src": "media/image.png"
+  }
+}
