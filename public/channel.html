@@ -4,25 +4,26 @@
     <meta charset="UTF-8" />
     <title>Skin Viewer</title>
     <link rel="stylesheet" href="./minechannel.css" />
-    <script src="./scripts/main.js"></script>
-    <script src="./scripts/mosaic.js"></script>
-    <script src="./scripts/mii.js"></script>
-    <script src="./scripts/pageTransition.js"></script>
+    <script type="module" src="./scripts/main.js"></script>
+    <script type="module" src="./scripts/mii.js"></script>
+    <script type="module" src="./scripts/pageTransition.js"></script>
     <script type="module" src="./scripts/goathorn.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/three@0.150.1/examples/js/loaders/FBXLoader.js"></script>
 
-    <script src="/node_modules/three/build/three.js"></script>
 
-    <script src="/node_modules/skinview3d/bundles/skinview3d.bundle.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>    
+
+
+
   </head>
   <body>
-    <div id="overlay" class="overlay in"></div>
 
-    <h1>MC Skins</h1>
+    
+    <div id="overlay" class="overlay in"></div>
+        <canvas id="c"></canvas>
+
     <div id="skins"></div>
 
-    <div id="overlay" class="overlay"></div>
 
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script>

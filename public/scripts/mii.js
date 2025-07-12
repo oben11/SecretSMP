@@ -1,3 +1,5 @@
+import * as skinview3d from 'https://cdn.jsdelivr.net/npm/skinview3d@3.1.0/+esm';
+
 class MinecraftMii {
   constructor(canvasId) {
     // Create and attach canvas
@@ -68,6 +70,11 @@ class MinecraftMii {
     this.canvas.style.left = `${x}px`;
     this.canvas.style.top = `${y}px`;
   }
+
+  startingPosition(x, y) {
+    this.home = { x, y };
+  }
+
   returnHome() {
     this.walk(this.home.x, this.home.y);
   }
@@ -231,3 +238,7 @@ class MinecraftMii {
   }
 
 }
+
+// Export the class for use in other modules
+export { MinecraftMii };
+export default MinecraftMii;
