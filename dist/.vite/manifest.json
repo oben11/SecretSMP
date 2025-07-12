@@ -1,26 +1,20 @@
 {
-  "_pageTransition-ChMQfhQ_.js": {
-    "file": "assets/pageTransition-ChMQfhQ_.js",
-    "name": "pageTransition",
-    "css": [
-      "assets/pageTransition-fMc27Cip.css"
-    ],
-    "assets": [
-      "assets/image-DY8xG64R.png"
-    ]
-  },
-  "_pageTransition-fMc27Cip.css": {
-    "file": "assets/pageTransition-fMc27Cip.css",
-    "src": "_pageTransition-fMc27Cip.css"
+  "_pageTransition-DwAeLrNG.js": {
+    "file": "assets/pageTransition-DwAeLrNG.js",
+    "name": "pageTransition"
   },
   "channel.html": {
-    "file": "assets/channel-BwJnfvM0.js",
+    "file": "assets/channel-DPtK58YX.js",
     "name": "channel",
     "src": "channel.html",
     "isEntry": true,
     "imports": [
-      "_pageTransition-ChMQfhQ_.js"
+      "_pageTransition-DwAeLrNG.js"
     ]
+  },
+  "index.html": {
+    "file": "assets/index-fMc27Cip.css",
+    "src": "index.html"
   },
   "media/image.png": {
     "file": "assets/image-DY8xG64R.png",

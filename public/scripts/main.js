@@ -50,7 +50,7 @@ document.addEventListener("DOMContentLoaded", function () {
           console.log(canvasId);
           console.log(miiInstances[canvasId]);
           const myMii = miiInstances[canvasId];
-          myMii.returnHome(); // Make each Mii return to its starting position
+          //myMii.returnHome(); // Make each Mii return to its starting position
         }
       }
     }, 2000);

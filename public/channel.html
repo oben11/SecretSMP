@@ -3,7 +3,6 @@
   <head>
     <meta charset="UTF-8" />
     <title>Skin Viewer</title>
-    <link rel="stylesheet" href="./minechannel.css" />
     <script type="module" src="./scripts/main.js"></script>
     <script type="module" src="./scripts/mii.js"></script>
     <script type="module" src="./scripts/pageTransition.js"></script>
@@ -13,16 +12,31 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>    
 
+ <style>
+          #scene-container {
+            width: 100px;
+            height: 100px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #1a202c; /* Dark background for contrast */
+        }
 
+          canvas {
+            display: block;
+            border-radius: 1rem;
+          }
+ </style>
 
   </head>
   <body>
 
     
     <div id="overlay" class="overlay in"></div>
-    <canvas id="c"></canvas>
-
     <div id="skins"></div>
+    <div id="scene-container" class="relative"></div>
+        <div id="message-box"></div>
+
 
 
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>

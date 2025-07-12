@@ -1,233 +1,207 @@
-// --- IMPORTS ---
-        
-        import * as THREE from 'three';
-        import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader.js';
-
-        // --- CONFIGURATION ---
-        // This is where you can easily change the model and its behavior.
-        const CONFIG = {
-            // IMPORTANT: Replace this with the path to your own .obj file.
-            modelUrl: '../media/goathorn.obj',
-
-            // Canvas size configuration
-            canvasWidth: 100, // Set your desired width here
-            canvasHeight: 100, // Set your desired height here
-
-            // Initial orientation of the model (in radians).
-            initialRotation: {
-                x: 0,
-                y: 0,
-                z: 0
-            },
-
-            // How far the model can tilt in either direction based on mouse position.
-            // Smaller values mean less sway.
-            swayLimits: {
-                x: 0.2, // Max tilt up/down
-                y: 0.3  // Max tilt left/right
-            },
-
-            // Scale factors for different interaction states.
-            scale: {
-                default: 20.0, // Adjusted scale for the teapot model
-                hover: 25,
-                click: 20
-            },
-            
-            // The "springiness" of the animations. Lower is slower/smoother.
-            easing: 0.08
-        };
-
-        // --- GLOBAL VARIABLES ---
-        let scene, camera, renderer, model;
+// ES Module Imports for Three.js and its components
+import * as THREE from 'three'; // Import from installed 'three' package
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'; // Import from jsm folder
+import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader.js'; // Import from jsm folder
+       let scene, camera, renderer, object;
+        let raycaster;
         let mouse = new THREE.Vector2();
-        let targetRotation = new THREE.Vector2();
-        let targetScale = new THREE.Vector3(CONFIG.scale.default, CONFIG.scale.default, CONFIG.scale.default);
+        let currentScale = new THREE.Vector3(1, 1, 1);
+        let targetScale = new THREE.Vector3(10, 10, 10);
+        let originalRotation = new THREE.Euler();
+        let targetRotation = new THREE.Euler();
         let isHovering = false;
-        let isMouseDown = false;
-        
-        const raycaster = new THREE.Raycaster();
+        let isClicking = false;
+        const maxTiltAngle = Math.PI / 16; // Limit tilt to ~11.25 degrees
+        const hoverScaleFactor = 1.2;
+        const clickScaleFactor = 0.8;
+        const scaleSpeed = 0.1; // Speed of scaling animation
+        const rotationSpeed = 0.05; // Speed of rotation interpolation
 
-        // --- INITIALIZATION ---
+        // Function to display a message in the message box
+        function showMessage(message, duration = 2000) {
+            const messageBox = document.getElementById('message-box');
+            messageBox.textContent = message;
+            messageBox.style.display = 'block';
+            setTimeout(() => {
+                messageBox.style.display = 'none';
+            }, duration);
+        }
+
+        // Initialize the Three.js scene
         function init() {
-            // Scene setup
+            // Get the container for the scene
+            const container = document.getElementById('scene-container');
+
+            // 1. Scene: Where objects are placed
             scene = new THREE.Scene();
 
-            // Camera setup
-            const fov = 45;
-            const aspect = CONFIG.canvasWidth / CONFIG.canvasHeight;
-            const near = 0.1;
-            const far = 1000;
-            camera = new THREE.PerspectiveCamera(fov, aspect, near, far);
-            camera.position.z = 120; // Pushed camera back for the larger model
+            // 2. Camera: How we view the scene
+            camera = new THREE.PerspectiveCamera(75, container.clientWidth / container.clientHeight, 0.1, 1000);
+            camera.position.z = 5;
 
-            // Renderer setup
-            const canvas = document.querySelector('#c');
-            renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
-            renderer.setSize(CONFIG.canvasWidth, CONFIG.canvasHeight);
+            // 3. Renderer: Displays the scene on the canvas
+            renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true }); // alpha: true for transparent background
+            renderer.setSize(container.clientWidth, container.clientHeight);
             renderer.setPixelRatio(window.devicePixelRatio);
+            container.appendChild(renderer.domElement); // Add canvas to the container
 
-            // Lighting
-            const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+            // Lights: Essential for seeing objects with MeshStandardMaterial
+            const ambientLight = new THREE.AmbientLight(0xffffff, 0.5); // Soft white light
             scene.add(ambientLight);
 
-            const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
-            directionalLight.position.set(5, 10, 7.5);
+            const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8); // Directional light
+            directionalLight.position.set(1, 1, 1).normalize();
             scene.add(directionalLight);
 
-            // Load the 3D model
-            loadModel();
-
-            // Add event listeners
-            addEventListeners();
-            
-            // Start the animation loop
-            animate();
-        }
-
-        // --- MODEL LOADING ---
-        function loadModel() {
+            // Create a placeholder 3D object (e.g., a BoxGeometry)
+            // If you have an OBJ model, you would use OBJLoader here:
             const loader = new OBJLoader();
-            
-            // Create a material for the object
-            const material = new THREE.MeshStandardMaterial({
-                color: 0xcccccc, // A light gray, like ceramic
-                metalness: 0.2,
-                roughness: 0.6,
-                emissive: 0x111111
-            });
+             loader.load(
+                 '../media/goathorn.obj', // Path to your OBJ model
+                 function (obj) {
+                     object = obj;
+                     // Often OBJ models are large or small, scale them appropriately
+                     object.scale.set(1, 1, 1);
+                     // Set initial orientation
+                    object.rotation.set(Math.PI / 8, Math.PI / 4, 0); // Example initial rotation
+                     originalRotation.copy(object.rotation);
+                     targetRotation.copy(object.rotation);
+                     scene.add(object);
 
-            loader.load(
-                CONFIG.modelUrl,
-                // onSuccess callback
-                function (object) {
-                    model = object;
-                    
-                    // Apply the material to all meshes in the loaded object
-                    model.traverse(function (child) {
-                        if (child instanceof THREE.Mesh) {
-                            child.material = material;
-                        }
-                    });
+            // Set initial orientation for the placeholder object
+            object.rotation.set(Math.PI / 8, Math.PI / 4, 0); // Rotate slightly on X and Y for better view
+            originalRotation.copy(object.rotation); // Store initial rotation
+            targetRotation.copy(object.rotation); // Initialize target rotation
 
-                    // Set initial state
-                    model.rotation.set(CONFIG.initialRotation.x, CONFIG.initialRotation.y, CONFIG.initialRotation.z);
-                    model.scale.set(CONFIG.scale.default, CONFIG.scale.default, CONFIG.scale.default);
-                    
-                    // Center the model
-                    new THREE.Box3().setFromObject(model).getCenter(model.position).multiplyScalar(-1);
+            // Raycaster for mouse interaction (hover and click detection)
+            raycaster = new THREE.Raycaster();
 
-                    scene.add(model);
-                },
-                // onProgress callback (optional)
-                function (xhr) {
-                    console.log((xhr.loaded / xhr.total * 100) + '% loaded');
-                },
-                // onError callback
-                function (error) {
-                    console.error('An error happened while loading the model:', error);
-                    // Display an error message to the user
-                    const info = document.getElementById('info');
-                    info.innerHTML = '<h1>Error</h1><p>Could not load the 3D model. Please check the console.</p>';
-                }
-            );
+            // OrbitControls for debugging camera movement (comment out if not needed)
+            // const controls = new THREE.OrbitControls(camera, renderer.domElement);
+            // controls.enableDamping = true; // Animate damping for smoother controls
+            // controls.dampingFactor = 0.25;
+            // controls.screenSpacePanning = false;
+            // controls.maxPolarAngle = Math.PI / 2;
+
+            // Event Listeners
+            window.addEventListener('resize', onWindowResize, false);
+            window.addEventListener('mousemove', onMouseMove, false);
+            window.addEventListener('click', onClick, false);
+                 },
+                 function (xhr) {
+                     console.log((xhr.loaded / xhr.total * 100) + '% loaded');
+                 },
+                 function (error) {
+                     console.error('An error occurred loading the OBJ model', error);
+                 }
+             );
+
         }
 
-        // --- EVENT LISTENERS ---
-        function addEventListeners() {
-            window.addEventListener('resize', onWindowResize);
-            window.addEventListener('mousemove', onMouseMove);
-            window.addEventListener('mousedown', onMouseDown);
-            window.addEventListener('mouseup', onMouseUp);
-        }
-
+        // Handle window resizing for responsiveness
+        
         function onWindowResize() {
-            camera.aspect = CONFIG.canvasWidth / CONFIG.canvasHeight;
+            const container = document.getElementById('scene-container');
+            camera.aspect = container.clientWidth / container.clientHeight;
             camera.updateProjectionMatrix();
-            renderer.setSize(CONFIG.canvasWidth, CONFIG.canvasHeight);
-        }
-
-        function onMouseMove(event) {
-            // Normalize mouse position to range from -1 to 1
-            mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-            mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
-
-            // Calculate the target rotation based on mouse position
-            // The further the mouse is from the center, the more it tilts
-            targetRotation.y = mouse.x * CONFIG.swayLimits.y;
-            targetRotation.x = mouse.y * CONFIG.swayLimits.x;
-        }
-
-        function onMouseDown() {
-            isMouseDown = true;
-            // If hovering, set the scale to the "click" size
-            if (isHovering) {
-                targetScale.set(CONFIG.scale.click, CONFIG.scale.click, CONFIG.scale.click);
-            }
-        }
-
-        function onMouseUp() {
-            isMouseDown = false;
-            // If hovering, return to "hover" size, otherwise return to default
-            if (isHovering) {
-                targetScale.set(CONFIG.scale.hover, CONFIG.scale.hover, CONFIG.scale.hover);
-            } else {
-                targetScale.set(CONFIG.scale.default, CONFIG.scale.default, CONFIG.scale.default);
-            }
+            renderer.setSize(container.clientWidth, container.clientHeight);
         }
         
-        // --- RAYCASTING (for hover detection) ---
-        function checkIntersection() {
-            if (!model) return; // Don't do anything if model isn't loaded yet
+        // Handle mouse movement for tilt/sway and hover detection
+        function onMouseMove(event) {
+            const container = document.getElementById('scene-container');
+            const rect = container.getBoundingClientRect();
+            // Calculate mouse position relative to the container
+            const mouseX = event.clientX - rect.left;
+            const mouseY = event.clientY - rect.top;
 
-            raycaster.setFromCamera(mouse, camera);
-            const intersects = raycaster.intersectObjects(model.children, true);
+            mouse.x = (mouseX / container.clientWidth) * 2 - 1;
+            mouse.y = -(mouseY / container.clientHeight) * 2 + 1;
 
-            if (intersects.length > 0) {
-                if (!isHovering) { // Mouse just entered the object
+            // Update target rotation based on mouse position (tilt/sway)
+            targetRotation.x = originalRotation.x + (-mouse.y * maxTiltAngle);
+            targetRotation.y = originalRotation.y + (mouse.x * maxTiltAngle);
+
+            // Check if mouse is inside the canvas area for hover effect
+            const isInside =
+                mouseX >= 0 && mouseX <= container.clientWidth &&
+                mouseY >= 0 && mouseY <= container.clientHeight;
+
+            if (isInside) {
+                if (!isHovering) {
                     isHovering = true;
-                    // Only scale up if the mouse isn't currently held down
-                    if (!isMouseDown) {
-                        targetScale.set(CONFIG.scale.hover, CONFIG.scale.hover, CONFIG.scale.hover);
-                    }
+                    targetScale.set(hoverScaleFactor, hoverScaleFactor, hoverScaleFactor);
                 }
             } else {
-                if (isHovering) { // Mouse just left the object
+                if (isHovering) {
                     isHovering = false;
-                    // If not holding mouse down, scale back to default
-                     if (!isMouseDown) {
-                        targetScale.set(CONFIG.scale.default, CONFIG.scale.default, CONFIG.scale.default);
+                    if (!isClicking) {
+                        targetScale.set(1, 1, 1);
                     }
                 }
             }
         }
 
-        // --- ANIMATION LOOP ---
+        // Handle click event for shrink/expand and custom action
+        function onClick(event) {
+            const container = document.getElementById('scene-container');
+            const rect = container.getBoundingClientRect();
+            const mouseX = event.clientX - rect.left;
+            const mouseY = event.clientY - rect.top;
+
+            // Only trigger click if mouse is inside the canvas
+            const isInside =
+                mouseX >= 0 && mouseX <= container.clientWidth &&
+                mouseY >= 0 && mouseY <= container.clientHeight;
+
+            if (isInside) {
+                console.log('Object clicked!');
+                showMessage('Object Clicked!');
+
+                // Change color on click (assumes object has a material)
+                if (object && object.traverse) {
+                    object.traverse(child => {
+                        if (child.isMesh && child.material && child.material.color) {
+                            child.material.color.set(Math.random() * 0xffffff);
+                        }
+                    });
+                }
+
+                // Shrink and expand animation
+                isClicking = true;
+                targetScale.set(clickScaleFactor, clickScaleFactor, clickScaleFactor); // Shrink
+                setTimeout(() => {
+                    targetScale.set(hoverScaleFactor, hoverScaleFactor, hoverScaleFactor); // Expand to hover size
+                    setTimeout(() => {
+                        if (!isHovering) {
+                            targetScale.set(1, 1, 1);
+                        }
+                        isClicking = false;
+                    }, 200);
+                }, 200);
+            }
+        }
+
+        // Animation loop
         function animate() {
             requestAnimationFrame(animate);
 
-            if (model) {
-                // Check for hover state
-                checkIntersection();
-                
-                // --- Easing / Interpolation ---
-                // This creates the smooth "swaying" and "scaling" effects.
-                // The model's rotation and scale gradually move towards their target values.
-                
-                // Sway animation
-                const finalRotationX = CONFIG.initialRotation.x + targetRotation.x;
-                const finalRotationY = CONFIG.initialRotation.y + targetRotation.y;
-                model.rotation.x += (finalRotationX - model.rotation.x) * CONFIG.easing;
-                model.rotation.y += (finalRotationY - model.rotation.y) * CONFIG.easing;
-                
-                // Scale animation
-                model.scale.x += (targetScale.x - model.scale.x) * CONFIG.easing;
-                model.scale.y += (targetScale.y - model.scale.y) * CONFIG.easing;
-                model.scale.z += (targetScale.z - model.scale.z) * CONFIG.easing;
-            }
+            // Smoothly interpolate object's rotation towards target rotation
+            object.rotation.x += (targetRotation.x - object.rotation.x) * rotationSpeed;
+            object.rotation.y += (targetRotation.y - object.rotation.y) * rotationSpeed;
+            // object.rotation.z += (targetRotation.z - object.rotation.z) * rotationSpeed; // If you want Z-axis sway
+
+            // Smoothly interpolate object's scale towards target scale
+            object.scale.lerp(targetScale, scaleSpeed);
+
+            // If using OrbitControls, update them here
+            // controls.update();
 
             renderer.render(scene, camera);
         }
 
-        // --- START ---
-        init();
+        // Start the application when the window loads
+        window.onload = function () {
+            init();
+            animate();
+        };
