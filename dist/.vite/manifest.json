@@ -4,17 +4,27 @@
     "name": "pageTransition"
   },
   "channel.html": {
-    "file": "assets/channel-DPtK58YX.js",
+    "file": "assets/channel-CBtJXPW-.js",
     "name": "channel",
     "src": "channel.html",
     "isEntry": true,
     "imports": [
       "_pageTransition-DwAeLrNG.js"
+    ],
+    "css": [
+      "assets/channel-BlNsqbq0.css"
+    ],
+    "assets": [
+      "assets/cursor-Dtb_dafE.png"
     ]
   },
   "index.html": {
-    "file": "assets/index-fMc27Cip.css",
+    "file": "assets/index-DYOooHp_.css",
     "src": "index.html"
+  },
+  "media/cursor.png": {
+    "file": "assets/cursor-Dtb_dafE.png",
+    "src": "media/cursor.png"
   },
   "media/image.png": {
     "file": "assets/image-DY8xG64R.png",

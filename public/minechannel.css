@@ -1,290 +1,97 @@
-        /* Basic reset and box-sizing */
-        *, *::before, *::after {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
+#scene-container {
+  position: absolute;
+  right: 5%;
+  bottom: 5%;
+  width: 200px;
+  height: 200px;
+  background-color: #0000; /* Dark background for contrast */
+}
 
-        /* Set the html and body to take up the full height of the viewport. */
-        html, body {
-            height: 100%;
-        }
+canvas {
+  display: block;
+  border-radius: 1rem;
+}
 
-        /* The body provides the outer black border by having a black background and padding. */
-        body {
-            background-color: #000000;
-            padding: 1.5rem;
-            font-family: 'Inter', sans-serif;
-            /* The overflow: hidden on the main body helps contain everything neatly. */
-            overflow: hidden;
-        }
+html,
+body {
+  height: 100%;
+  cursor: url("./media/cursor.png") 16 16, pointer;
+}
 
-        /* This is the main content container, which now holds all the new elements.
-           It takes the place of the old body styling. */
-        .content-wrapper {
-            z-index: 0;
-            width: 100%;
-            height: 100%;
-            background-color: #fffcfc;
-            border-radius: 1rem;
-            padding: 2rem;
-            position: relative; /* Needed for positioning children */
-            overflow: hidden; /* Hide overflow from children */
-            filter: blur(1px); /* Blur effect as requested */
-        }
-        
-        /* New styles provided by user */
+.miiShadow {
+  position: absolute;
+  bottom: 10px; /* Position the shadow slightly above the bottom of the container */
+  left: 50%;
+  transform: translateX(-50%);
+  width: 120px; /* Width of the shadow */
+  height: 40px; /* Height of the shadow */
+  background: rgba(0, 0, 0, 0.5); /* Black with 50% transparency */
+  border-radius: 50%; /* Creates the oval shape */
+  filter: blur(8px); /* Adds a blur effect to simulate shadow softness */
+  z-index: -1; /* Ensure the shadow is behind the canvas */
+}
 
-        @import url('https://fonts.googleapis.com/css2?family=Ubuntu+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap');
-        
-        .secret-smp-container {
-            z-index: 3;
-            border-radius: 2em;
-            border: 5px solid black;
-            padding: 0px;
-            height: fit-content;
-            width: fit-content;
-            padding-left: 0.5em;
-            padding-right: 0.5em;
-            padding-bottom: 0.2em;
-            transform: scale(1.6); /* Replaced scale with transform */
-            position: absolute;
-            top: 10%;
-            right: 10%;
-        }
-        
-        .secret-smp-text {
-            font-family: "Ubuntu Mono", monospace;
-            font-weight: 700;
-            font-style: normal;
-            font-size: 16px;
-            padding: 0px;
-        }
+.overlay {
+  /* Positioning: Fixed to the top, full width, and initially off-screen */
+  position: fixed;
+  top: -200vh; /* Start completely above the viewport */
+  left: 0;
+  width: 100%;
+  height: 110vh;
 
-        .mosaic {
-            position: fixed;
-            display: flex;
-        }
+  /* Appearance: White background with a transparent gradient at the bottom */
+  background: linear-gradient(
+    to bottom,
+    white 90%,
+    rgba(255, 255, 255, 0) 100%
+  );
 
-        a {
-            text-decoration: none;
-        }
+  /* Transition: Smooth 'ease' transition for the 'top' property over 0.5 seconds */
+  transition: top 0.5s ease-in;
 
-        .wii-button {
-            left: 48%;
-            transform: translateX(-50%); /* Center horizontally */
-            top: 20%;
-            position: absolute; /* Changed to absolute to position within content-wrapper */
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 1.5rem 8rem;
-            border-radius: 5rem;
-            cursor: pointer;
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
-            border: none;
-            font-size: 2rem;
-            font-family: 'Seurat', sans-serif; /* Font from user styles */
-            z-index: 10;
-        }
+  /* Ensure it's above other content */
+  z-index: 9999;
+}
+.overlay.in {
+  /* Active state: Bring the overlay into view */
+  top: 0; /* Adjust this value to control how much of the overlay is visible */
+}
+.overlay.out {
+  position: fixed;
+  top: 0vh; /* Start completely above the viewport */
+  left: 0;
+  width: 100%;
+  height: 110px;
+  background: linear-gradient(
+    to bottom,
+    white 90%,
+    rgba(255, 255, 255, 0) 100%
+  );
 
-        .wii-button:hover {
-            transform: translateX(-50%) scale(1.05); /* Adjust transform for centering */
-        }
+  z-index: 9999;
+}
 
-        .wii-button:active {
-            transform: translateX(-50%) scale(0.95); /* Adjust transform for centering */
-        }
+.overlaytest {
+  position: fixed;
+  top: 0vh; /* Start completely above the viewport */
+  left: 0;
+  width: 100%;
+  height: 110px;
+  background: linear-gradient(
+    to bottom,
+    white 90%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  transition: top 0.5s ease-in;
+  z-index: 9999;
+}
 
-        .wii-button::before {
-            content: '';
-            position: absolute;
-            top: 0.4rem;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 120%; /* Adjusted width */
-            height: 30%;
-            border-radius: 50%;
-            opacity: 0.7;
-            filter: blur(0.5rem);
-        }
+.canvas-wrapper {
+  position: relative; /* Allows absolute positioning of the drop shadow */
+  display: inline-block; /* Ensures the wrapper fits the canvas size */
 
-        .wii-button::after {
-            content: '';
-            position: absolute;
-            inset: 0;
-            border-radius: 5rem;
-            pointer-events: none;
-        }
-
-        .light-mode {
-            background-color: #f0f7fa;
-            box-shadow: inset 0 -0.3rem 0.5rem #87bfd8, 0 0.2rem 0.3rem rgba(0, 0, 0, 0.1);
-            color: #212121;
-        }
-
-        .light-mode:hover {
-            box-shadow: inset 0 -0.3rem 0.5rem #87bfd8, 0 0.4rem 0.5rem rgba(0, 0, 0, 0.2);
-        }
-
-        .light-mode:active {
-            box-shadow: inset 0 -0.1rem 0.2rem #87bfd8, 0 0.1rem 0.2rem rgba(0, 0, 0, 0.2);
-        }
-
-        .light-mode::before {
-            background: linear-gradient(135deg, rgba(255, 255, 255, 0.6), rgba(255, 255, 255, 0));
-        }
-
-        .light-mode::after {
-            border: 0.1rem solid #42a5f5; 
-        }
-
-        .scanlines {
-            z-index: 2;
-            position: absolute; /* Changed to absolute */
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-        }
-        
-        .scanlines::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 5px;
-            background: rgba(255, 255, 255, 0.3);
-            opacity: 0.9;
-            animation: scanline 60s linear infinite;
-        }
-        
-        .scanlines::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(to bottom, transparent 70%, rgba(182, 182, 182, 0.3) 51%);
-            background-size: 100% 6px;
-            animation: scanlines 8s steps(60) infinite;
-        }
-        
-        @keyframes scanline {
-            0% { transform: translateY(0); }
-            100% { transform: translateY(100vh); }
-        }
-        
-        @keyframes scanlines {
-            0% { background-position: 0 0; }
-            100% { background-position: 0 400px; }
-        }
-
-        .footer {
-            position: absolute; /* Changed to absolute */
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            height: 25%;
-            background-color: rgb(232, 232, 232);
-            border-top: 2px solid black; /* Added top border */
-        }
-
-        .mii-display {
-            position: absolute; /* Changed to absolute */
-            left: 0%;
-            width: 100%;
-            height: 100%;
-            bottom: 5vh;
-        }
-
-        .gradient {
-            position: absolute; /* Changed to absolute */
-            z-index: 1;
-            top: 0;
-            width: 100%; 
-            height: 70%;
-            background: linear-gradient(to bottom, white 30%, transparent 70%);
-            pointer-events: none;
-        }
-
-        .buttons {
-            position: absolute; /* Changed to absolute */
-            width: 100%;
-            height: 25%;
-            bottom: 0;
-            display: flex; /* Added display flex */
-            justify-content: center;
-            align-items: center; /* Added align-items */
-        }
-
-        .logo {
-            /* content:url() is not reliable for main content. Better to use an <img> tag. 
-               This is a placeholder div for the logo style. */
-            background-image: url("media/image.png"); /* Path to your logo image */
-            background-repeat: no-repeat;
-            background-size: contain;
-            position: absolute;
-            z-index: 999;
-            width: 500px; /* Example size */
-            height: 250px; /* Example size */
-            top: 30%;
-            left: 50%;
-            transform: translateX(-50%);
-        }
-
-            body {
-            font-family: 'Inter', sans-serif;
-            overflow: hidden; /* Prevent scrollbars when the overlay is out of view */
-        }
-
-        .overlay {
-            /* Positioning: Fixed to the top, full width, and initially off-screen */
-            position: fixed;
-            top: -200vh; /* Start completely above the viewport */
-            left: 0;
-            width: 100%;
-            height: 110vh;
-            
-            /* Appearance: White background with a transparent gradient at the bottom */
-            background: linear-gradient(to bottom, white 90%, rgba(255, 255, 255, 0) 100%);
-            
-            /* Transition: Smooth 'ease' transition for the 'top' property over 0.5 seconds */
-            transition: top 0.5s ease-in;
-            
-            /* Ensure it's above other content */
-            z-index: 9999;
-        }
-        .overlay.in {
-            /* Active state: Bring the overlay into view */
-            top: 0; /* Adjust this value to control how much of the overlay is visible */
-
-            
-        }
-        .overlay.out {
-            position: fixed;
-            top: 0vh; /* Start completely above the viewport */
-            left: 0;
-            width: 100%;
-            height: 110px;
-                        background: linear-gradient(to bottom, white 90%, rgba(255, 255, 255, 0) 100%);
-
-                        z-index: 9999;
-
-        }
-
-        .overlaytest {
-            position: fixed;
-            top: 0vh; /* Start completely above the viewport */
-            left: 0;
-            width: 100%;
-            height: 110px;
-            background: linear-gradient(to bottom, white 90%, rgba(255, 255, 255, 0) 100%);
-            transition: top 0.5s ease-in;
-            z-index: 9999;
-        }
-
- 
+  width: 200px; /* Adjust width as needed */
+  height: 100px; /* Adjust height as needed */
+  background-color: rgba(0, 0, 0, 0.5); /* Black with 50% transparency */
+  border-radius: 50%; /* Creates the oval shape */
+}

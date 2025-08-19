@@ -2,10 +2,23 @@ import * as skinview3d from 'skinview3d';
 
 class MinecraftMii {
   constructor(canvasId) {
-    // Create and attach canvas
+    // parent container
+    this.container = document.createElement(''+canvasId);
+    document.body.appendChild(this.container);
+
+
+    // TO DO: mii interaction popup menu
+
+    // shadow element
+    this.shadow = document.createElement('div');
+    this.shadow.className = 'miiShadow';
+    this.container.appendChild(this.shadow);
+
+    // three.js canvas scene
     this.canvas = document.createElement('canvas');
     this.canvas.id = canvasId;
-    document.body.appendChild(this.canvas);
+    this.container.appendChild(this.canvas);
+
 
     // Initialize SkinViewer
     this.viewer = new skinview3d.SkinViewer({
@@ -17,6 +30,7 @@ class MinecraftMii {
       fov: 15,
       rotateButton: true,
       panButton: true,
+      //nameTag: canvasId,
     });
 
     this.viewer.controls.enableZoom = false;
@@ -62,21 +76,17 @@ class MinecraftMii {
   }
 
   // === HELPER METHODS ===
-  faceForward() {
+
+
+  setStartPos(x, y) {
+    this.startPosition = { x, y };
   }
 
-  startPosition(x, y) {
-    this.home = { x, y };
-    this.canvas.style.left = `${x}px`;
-    this.canvas.style.top = `${y}px`;
-  }
-
-  startingPosition(x, y) {
-    this.home = { x, y };
-  }
-
-  returnHome() {
-    this.walk(this.home.x, this.home.y);
+  returnToStartPos() {
+    this.walk(this.startPosition.x, this.startPosition.y, 2).then(() => {
+    this.setRotation(0, 500); // Reset rotation to face forward
+    });
+    
   }
 
   cancelAnimation() {
@@ -116,10 +126,15 @@ class MinecraftMii {
   }
 
   Walking(active) {
+    const lockedY = this.player.rotation.y;
     this.viewer.animation = active
       ? new skinview3d.RunningAnimation()
       : new skinview3d.IdleAnimation();
+    this.player.rotation.y = lockedY; // Lock Y rotation
+
   }
+
+  
 
   dispose() {
     this.viewer.dispose();
@@ -153,29 +168,64 @@ class MinecraftMii {
     }, 5000);
   }
 
-  walk(x, y) {
-    anime.remove(this.canvas); // Stop current movement
-    this.Walking(true);
+walk(x, y, speed = 5) {
+  return new Promise((resolve) => {
+    
+    anime.remove(this.container); // Stop current movement
+    const rect = this.container.getBoundingClientRect();
+    const currentX = rect.left;
+    const currentY = rect.top;
 
-    const newRotation = this.calculateRotation(x, y);
-    this.setRotation(newRotation, 400);
+    console.log(`Walking from (${currentX}, ${currentY}) to (${x}, ${y})`);
 
-    const rect = this.canvas.getBoundingClientRect();
-    const currentX = rect.left + rect.width / 2;
-    const currentY = rect.top + rect.height / 2;
+    if (currentX !== x || currentY !== y) {
+      this.Walking(true);
+      const newRotation = this.calculateRotation(x, y);
+      const duration = Math.hypot(currentX - x, currentY - y)  * speed;
+      console.log(`Walking duration: ${duration}ms`);
+      this.setRotation(newRotation, duration);
 
-    anime({
-      targets: this.canvas,
-      left: x,
-      top: y,
-      duration: Math.abs((currentX - x + (currentY - y)) * 5),
-      easing: 'linear',
-      complete: () => {
-        this.Walking(false);
-        this.player.rotation.y = newRotation;
-      },
-    });
-  }
+      // Walking Noises      
+      if (this.soundTimer) {
+        clearInterval(this.soundTimer);
+        console.log("Clearing previous sound timer");
+        this.soundTimer = null;
+      }
+      const interval = 100+Math.floor(Math.random() * 200) + 1; // ms
+      this.soundTimer = setInterval(() => {
+        const randSound = Math.floor(Math.random() * 5) + 1;
+        const audio = new Audio(`../media/sounds/step${randSound}.mp3`);
+        audio.volume = 0.5;
+        audio.play();
+      }, interval);
+
+      // Walking movement
+      anime({
+        targets: this.container,
+        left: x,
+        top: y,
+        duration: duration,
+        easing: 'linear',
+        complete: () => {
+          clearInterval(this.soundTimer); // 🔇 Stop sounds
+          this.soundTimer = null; // Clear the timer reference
+          this.Walking(false);
+          this.player.rotation.y = newRotation;
+          resolve(); // ✅ Tell the caller it's done
+        },
+      });
+    } else {
+      resolve(); // ✅ Still resolve if already at destination
+    }
+  });
+}
+
+
+
+
+    
+
+  
 
   rotateArmsSineWave(amplitude, frequency, duration) {
     const startTime = performance.now();
@@ -214,28 +264,37 @@ class MinecraftMii {
     return radians;
   }
 
-  animateCharacterRotation(targetRadians, duration) {
-    const startTime = performance.now();
-    const startRotationY = this.player.rotation.y; 
-    let deltaRotation = targetRadians - startRotationY;
-    
-    
-    deltaRotation = (deltaRotation + Math.PI) % (2 * Math.PI) - Math.PI;
-
-    const animate = (currentTime) => {
-      const elapsed = currentTime - startTime;
-      if (elapsed >= duration) {
-        this.player.rotation.y = targetRadians;
-      } else {
-        const progress = elapsed / duration;
-        this.player.rotation.y = startRotationY + deltaRotation * progress;
-        requestAnimationFrame(animate);
-      }
-    };
-
-
-    requestAnimationFrame(animate);
+animateCharacterRotation(targetRadians, duration) {
+  if (this.rotationAnimationId) {
+    cancelAnimationFrame(this.rotationAnimationId);
+    this.rotationAnimationId = null;
   }
+
+  const startTime = performance.now();
+  const startRotationY = this.player.rotation.y;
+
+  let deltaRotation = ((((targetRadians - startRotationY) % (2 * Math.PI)) + 3 * Math.PI) % (2 * Math.PI)) - Math.PI;
+
+  if (Math.abs(deltaRotation) < 0.0001) {
+    console.log("Already at target rotation, no animation needed.");
+    return;
+  }
+  console.log('deltarotation: ' + deltaRotation);
+  
+  const animate = (currentTime) => {
+    const elapsed = currentTime - startTime;
+    if (elapsed >= duration) {
+      this.player.rotation.y = targetRadians;
+    } else {
+      const progress = elapsed / duration;
+      this.player.rotation.y = startRotationY + deltaRotation * progress;
+      this.rotationAnimationId = requestAnimationFrame(animate);
+    }
+  };
+  
+  this.rotationAnimationId = requestAnimationFrame(animate);
+}
+
 
 }
 
