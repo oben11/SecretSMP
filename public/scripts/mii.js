@@ -2,12 +2,17 @@ import * as skinview3d from 'skinview3d';
 
 class MinecraftMii {
   constructor(canvasId) {
-    // parent container
-    this.container = document.createElement(''+canvasId);
+    // parent container (use a real element)
+    this.container = document.createElement('div');
+    this.container.id = `${canvasId}-container`;
+    this.container.className = 'miiContainer';
+    
+
+    // starting position (so anime has something to animate from)
+    this.container.style.position = 'absolute';
+
+
     document.body.appendChild(this.container);
-
-
-    // TO DO: mii interaction popup menu
 
     // shadow element
     this.shadow = document.createElement('div');
@@ -17,7 +22,9 @@ class MinecraftMii {
     // three.js canvas scene
     this.canvas = document.createElement('canvas');
     this.canvas.id = canvasId;
+    this.canvas.className = 'miiCanvas';
     this.container.appendChild(this.canvas);
+
 
 
     // Initialize SkinViewer

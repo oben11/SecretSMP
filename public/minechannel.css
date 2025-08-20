@@ -7,7 +7,15 @@
   background-color: #0000; /* Dark background for contrast */
 }
 
-canvas {
+
+.miiContainer {
+  position: absolute;       /* crucial so left/top animate */
+  left: 0;                  /* starting coordinates */
+  top: 0;
+  display: inline-block;    /* sizes to its contents (canvas + shadow) */
+}
+
+.miiCanvas {
   display: block;
   border-radius: 1rem;
 }
@@ -86,12 +94,3 @@ body {
   z-index: 9999;
 }
 
-.canvas-wrapper {
-  position: relative; /* Allows absolute positioning of the drop shadow */
-  display: inline-block; /* Ensures the wrapper fits the canvas size */
-
-  width: 200px; /* Adjust width as needed */
-  height: 100px; /* Adjust height as needed */
-  background-color: rgba(0, 0, 0, 0.5); /* Black with 50% transparency */
-  border-radius: 50%; /* Creates the oval shape */
-}

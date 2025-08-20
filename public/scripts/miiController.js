@@ -20,7 +20,7 @@ let returnToStartPosition = () => {}; // Declare now, define later
 document.addEventListener("DOMContentLoaded", function () {
   const maxMiis = 5;
   let counter = 0;
-  let wander = true; // Control flag
+  let wander = false; // Control flag
 
   axios.get("/api/skins").then((res) => {
     res.data.forEach((url) => {
@@ -47,10 +47,9 @@ document.addEventListener("DOMContentLoaded", function () {
       myMii.setStartPos(col * 150, row * 200);
 
       miiInstances[canvasId] = myMii;
-      myMii.walk(1000, 500);
+      myMii.walk(500, 500);
       counter++;
     });
-
     // Wander loop
     async function wanderLoop() {
       while (wander) {
