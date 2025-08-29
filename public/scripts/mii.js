@@ -10,8 +10,6 @@ class MinecraftMii {
 
     // starting position (so anime has something to animate from)
     this.container.style.position = 'absolute';
-
-
     document.body.appendChild(this.container);
 
     // shadow element
@@ -30,9 +28,6 @@ class MinecraftMii {
     // Initialize SkinViewer
     this.viewer = new skinview3d.SkinViewer({
       canvas: this.canvas,
-      width: 300,
-      height: 400,
-      model: "slim",
       zoom: 1,
       fov: 15,
       rotateButton: true,
@@ -60,7 +55,7 @@ class MinecraftMii {
 
   // === EVENT REACTIONS ===
   reactToClick() {
-    console.log("hello!");
+    console.log("clicked");
 
     //this.setRotation((2 * Math.PI), 500);
 
@@ -83,8 +78,6 @@ class MinecraftMii {
   }
 
   // === HELPER METHODS ===
-
-
   setStartPos(x, y) {
     this.startPosition = { x, y };
   }
@@ -111,10 +104,6 @@ class MinecraftMii {
 
   setCape(capeUrl) {
     this.viewer.loadCape(capeUrl);
-  }
-
-  setModel(modelType) {
-    this.viewer.loadModel(modelType);
   }
 
   setSize(width, height) {
@@ -198,11 +187,11 @@ walk(x, y, speed = 5) {
         console.log("Clearing previous sound timer");
         this.soundTimer = null;
       }
-      const interval = 100+Math.floor(Math.random() * 200) + 1; // ms
+      const interval = 500+Math.floor(Math.random() * 200) + 1; // ms
       this.soundTimer = setInterval(() => {
         const randSound = Math.floor(Math.random() * 5) + 1;
         const audio = new Audio(`../media/sounds/step${randSound}.mp3`);
-        audio.volume = 0.5;
+        audio.volume = 0.1;
         audio.play();
       }, interval);
 
@@ -218,6 +207,7 @@ walk(x, y, speed = 5) {
           this.soundTimer = null; // Clear the timer reference
           this.Walking(false);
           this.player.rotation.y = newRotation;
+          this.animateCharacterRotation(0, 100);
           resolve(); // ✅ Tell the caller it's done
         },
       });
@@ -225,6 +215,37 @@ walk(x, y, speed = 5) {
       resolve(); // ✅ Still resolve if already at destination
     }
   });
+}
+
+
+getrandomInt(min, max) {
+  min = Math.ceil(min);
+  max = Math.floor(max);
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+wander(active) {
+  console.log("wander: " + active);
+  this.stopWander();
+  if (!active) return;
+  this._wandering = true;
+  const step = () => {
+    if (!this._wandering) return;
+    let bounding = document.body.getBoundingClientRect();
+    const x = this.getrandomInt(100, bounding.width - 100);
+    const y = this.getrandomInt(100, bounding.height - 100);
+    this.walk(x, y).then(() => {
+      if (!this._wandering) return;
+      this._wanderTimeout = setTimeout(step, this.getrandomInt(2000, 10000));
+    });
+  };
+  step();
+}
+
+stopWander() {
+  this._wandering = false;
+  clearTimeout(this._wanderTimeout);
+  this._wanderTimeout = null;
 }
 
 

@@ -41,33 +41,20 @@ document.addEventListener("DOMContentLoaded", function () {
       const row = Math.floor(i / Math.floor(window.innerWidth / 150));
       const col = i % Math.floor(window.innerWidth / 150);
 
-      myMii.canvas.style.position = "absolute";
-      myMii.canvas.style.left = `${col * 150}px`;
-      myMii.canvas.style.top = `${row * 200}px`;
+      //myMii.canvas.style.left = `${col * 150}px`;
+      //myMii.canvas.style.top = `${row * 200}px`;
       myMii.setStartPos(col * 150, row * 200);
 
+      myMii.container.style.left = `${col * 150}px`;
+      myMii.container.style.top = `${row * 200}px`;
+
+      console.log(`Positioning Mii ${username} at (${col * 150}, ${row * 200})`);
+
       miiInstances[canvasId] = myMii;
-      myMii.walk(500, 500);
+      //myMii.walk(500, 500);
+      myMii.wander(true); // Enable wandering
       counter++;
     });
-    // Wander loop
-    async function wanderLoop() {
-      while (wander) {
-        for (const canvasId in miiInstances) {
-          if (getRandomInt(1,3) === 1) { // 33% chance to skip this Mii
-          if (Object.hasOwn(miiInstances, canvasId)) {
-            const mii = miiInstances[canvasId];
-            const x = getRandomInt(0, window.innerWidth - 150);
-            const y = getRandomInt(0, window.innerHeight - 200);
-            mii.walk(x, y);
-          }
-          }
-        }
-        await pause(2000); // Wait 2 seconds between moves
-      }
-    }
-
-    wanderLoop();
   });
 
 });
@@ -77,8 +64,11 @@ document.addEventListener("DOMContentLoaded", function () {
 returnToStartPosition = () => {
   for (const canvasId in miiInstances) {
     if (Object.hasOwn(miiInstances, canvasId)) {
-      this.wander = false; // Stop wandering
+      //this.wander = false; // Stop wandering
+      miiInstances[canvasId].wander(false);
       miiInstances[canvasId].returnToStartPos();
+
+
     }
   }
 };

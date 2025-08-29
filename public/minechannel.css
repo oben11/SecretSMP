@@ -9,15 +9,31 @@
 
 
 .miiContainer {
-  position: absolute;       /* crucial so left/top animate */
+  position: relative;       /* crucial so left/top animate */
+  width: 150px;
+  height: 200px;
   left: 0;                  /* starting coordinates */
   top: 0;
-  display: inline-block;    /* sizes to its contents (canvas + shadow) */
+  justify-content: center;
+  z-index: 2;
 }
 
 .miiCanvas {
-  display: block;
+  position: absolute;
   border-radius: 1rem;
+  z-index: 1;
+}
+
+.miiShadow {
+  position: absolute;
+  bottom: 10px; /* Position the shadow slightly above the bottom of the container */
+  width: 120px; /* Width of the shadow */
+  height: 40px; /* Height of the shadow */
+  left: 10%;
+  background: rgba(0, 0, 0, 0.5); /* Black with 50% transparency */
+  border-radius: 50%; /* Creates the oval shape */
+  filter: blur(8px); /* Adds a blur effect to simulate shadow softness */
+  z-index: 0; /* Ensure the shadow is behind the canvas */
 }
 
 html,
@@ -26,18 +42,7 @@ body {
   cursor: url("./media/cursor.png") 16 16, pointer;
 }
 
-.miiShadow {
-  position: absolute;
-  bottom: 10px; /* Position the shadow slightly above the bottom of the container */
-  left: 50%;
-  transform: translateX(-50%);
-  width: 120px; /* Width of the shadow */
-  height: 40px; /* Height of the shadow */
-  background: rgba(0, 0, 0, 0.5); /* Black with 50% transparency */
-  border-radius: 50%; /* Creates the oval shape */
-  filter: blur(8px); /* Adds a blur effect to simulate shadow softness */
-  z-index: -1; /* Ensure the shadow is behind the canvas */
-}
+
 
 .overlay {
   /* Positioning: Fixed to the top, full width, and initially off-screen */
