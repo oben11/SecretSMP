@@ -99,3 +99,36 @@ body {
   z-index: 9999;
 }
 
+
+        .bubble {
+          z-index: 10;
+          animation:fadeInScale 0.3s;
+            position: absolute;
+            background: #ffffff;
+            border-radius: 9999px; /* This makes the edges half-circles while the top and bottom remain straight lines */
+            padding: 24px;
+            width: 100px;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.1);
+        }
+
+            .bubble::after {
+            z-index: 10;
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 0;
+            border-left: 15px solid transparent;
+            border-right: 15px solid transparent;
+            border-top: 15px solid #ffffff;
+            bottom: -14px; /* Position the tail */
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+
+        @keyframes fadeInScale {
+        0% { opacity: 0; transform: scale(0); }
+        30% { opacity: 1; transform: scale(1.1); }
+        100% { opacity: 1; transform: scale(1.0); }
+    }
+

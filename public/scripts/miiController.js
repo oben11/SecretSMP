@@ -64,11 +64,8 @@ document.addEventListener("DOMContentLoaded", function () {
 returnToStartPosition = () => {
   for (const canvasId in miiInstances) {
     if (Object.hasOwn(miiInstances, canvasId)) {
-      //this.wander = false; // Stop wandering
-      miiInstances[canvasId].wander(false);
+      miiInstances[canvasId].stopWander();
       miiInstances[canvasId].returnToStartPos();
-
-
     }
   }
 };

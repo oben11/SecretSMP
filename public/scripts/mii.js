@@ -1,8 +1,9 @@
 import * as skinview3d from 'skinview3d';
+import bubble from './bubble.js';
 
 class MinecraftMii {
   constructor(canvasId) {
-    // parent container (use a real element)
+    // parent container
     this.container = document.createElement('div');
     this.container.id = `${canvasId}-container`;
     this.container.className = 'miiContainer';
@@ -35,9 +36,11 @@ class MinecraftMii {
       //nameTag: canvasId,
     });
 
+    // Disable default controls
     this.viewer.controls.enableZoom = false;
     this.viewer.controls.enableRotate = false;
     this.viewer.controls.enablePan = false;
+
     // Aliases for easier access
     this.player = this.viewer.playerObject;
     this.head = this.player.skin.head;
@@ -49,33 +52,38 @@ class MinecraftMii {
     this.camera.rotation.set(-2, 0, 0);
  
     // Setup click interaction
-    this.canvas.addEventListener('click', () => this.reactToClick());
+    this.canvas.addEventListener('click', () => this.onclick());
   }
   
 
   // === EVENT REACTIONS ===
-  reactToClick() {
+  onclick() {
     console.log("clicked");
 
-    //this.setRotation((2 * Math.PI), 500);
-
     setTimeout(() => {
-      //this.returnHome();
-      this.stareAtCursor();
-
+      this.selected();
     }, 100); // Delay of 100ms
-
-
-
-
-
-    //this.rotateArmsSineWave(0.15, 1.5, 5000); // Rotate arms in a sine wave pattern
-    //this.viewer.animation = null;
-    
-    //this.faceForward();
-    //this.scaleHead(1.3); 
-    //this.viewer.render();
   }
+
+  selected() {
+      this.setRotation(0, 100);
+      this.cancelAnimation();
+      this.stopWander(); 
+      const rect = this.container.getBoundingClientRect();
+      const bubbleX = rect.left;
+      const bubbleY = rect.top - 60;
+      bubble(bubbleX, bubbleY, this);
+      this.scaleHead(1.3);
+      this.head.rotation.set(-0.5, 0, 0);
+
+
+  }
+
+  unselect() {
+    this.scaleHead(1);
+    this.wander(true);
+  }
+
 
   // === HELPER METHODS ===
   setStartPos(x, y) {
@@ -91,7 +99,7 @@ class MinecraftMii {
 
   cancelAnimation() {
     this.Walking(false);
-    anime.remove(this.canvas); // Stop current movement
+    anime.remove(this.container); // Stop current movement
   }
 
   scaleHead(factor) {
@@ -187,7 +195,7 @@ walk(x, y, speed = 5) {
         console.log("Clearing previous sound timer");
         this.soundTimer = null;
       }
-      const interval = 500+Math.floor(Math.random() * 200) + 1; // ms
+      const interval = 300+Math.floor(Math.random() * 200) + 1; // ms
       this.soundTimer = setInterval(() => {
         const randSound = Math.floor(Math.random() * 5) + 1;
         const audio = new Audio(`../media/sounds/step${randSound}.mp3`);
