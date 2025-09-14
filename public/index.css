@@ -26,12 +26,10 @@
         /* This is the main content container, which now holds all the new elements.
            It takes the place of the old body styling. */
         .content-wrapper {
-            z-index: 0;
             width: 100%;
             height: 100%;
             background-color: #fffcfc;
             border-radius: 1rem;
-            padding: 2rem;
             position: relative; /* Needed for positioning children */
             overflow: hidden; /* Hide overflow from children */
             filter: blur(1px); /* Blur effect as requested */
@@ -42,7 +40,6 @@
         @import url('https://fonts.googleapis.com/css2?family=Ubuntu+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap');
         
         .secret-smp-container {
-            z-index: 3;
             border-radius: 2em;
             border: 5px solid black;
             padding: 0px;
@@ -65,15 +62,12 @@
             padding: 0px;
         }
 
-        .mosaic {
-            position: fixed;
-            display: flex;
-        }
-
+        /* Remove link underline */
         a {
             text-decoration: none;
         }
 
+        /* Wii Button Clone */ 
         .wii-button {
             left: 48%;
             transform: translateX(-50%); /* Center horizontally */
@@ -89,7 +83,6 @@
             border: none;
             font-size: 2rem;
             font-family: 'Seurat', sans-serif; /* Font from user styles */
-            z-index: 10;
         }
 
         .wii-button:hover {
@@ -144,7 +137,6 @@
         }
 
         .scanlines {
-            z-index: 2;
             position: absolute; /* Changed to absolute */
             top: 0;
             left: 0;
@@ -195,35 +187,71 @@
             height: 25%;
             background-color: rgb(232, 232, 232);
             border-top: 2px solid black; /* Added top border */
+            display: flex; /* Added display flex */
+            justify-content: center;
+            align-items: center; /* Added align-items */
         }
 
-        .mii-display {
+        /* The main container for all the rows */
+#miiDisplay {
+  position: absolute;      /* Take out of normal flow and position relative to nearest positioned ancestor */
+  bottom: 50%;               /* Stick to the bottom */
+  left: 0;                 /* Align to the left edge */
+  width: 100%;
+  display: flex;           /* Use flexbox for layout */
+  flex-direction: column;  /* Stack children vertically */
+}
+
+/* Each row of images */
+.image-row {
+  display: flex; /* This makes the images line up horizontally */
+  width: 100%;
+  line-height: 0; /* Fixes potential small gaps under images */
+}
+
+/* Each individual image */
+.image-row .imgContainer {
+
+  /* This is the magic part! */
+  /* It tells the image to grow and shrink as needed to fill the space. */
+  flex: 1 1 0;
+  /* Let flexbox determine the width automatically. */
+  width: 0;
+  min-width: 0; /* Allows the image to shrink below its original size */
+
+  /* This maintains the image's original aspect ratio. */
+  height: auto;
+}
+
+.Mii {
+      border:#000000 2px solid;
+
+    position: absolute;
+    width: 100px;
+    height: 200px;
+    z-index: inherit;
+}
+
+        .miiDisplayBackground {
             position: absolute; /* Changed to absolute */
-            left: 0%;
-            width: 100%;
-            height: 100%;
-            bottom: 5vh;
+            left: 0;
+            width: 100vw;
+            height: 100vw;
+            bottom: 0;
         }
 
         .gradient {
-            position: absolute; /* Changed to absolute */
-            z-index: 1;
+            z-index: 5;
+            position: static; /* Changed to absolute */
             top: 0;
+            left: 0;
             width: 100%; 
             height: 70%;
             background: linear-gradient(to bottom, white 30%, transparent 70%);
             pointer-events: none;
         }
 
-        .buttons {
-            position: absolute; /* Changed to absolute */
-            width: 100%;
-            height: 25%;
-            bottom: 0;
-            display: flex; /* Added display flex */
-            justify-content: center;
-            align-items: center; /* Added align-items */
-        }
+
 
         .logo {
             /* content:url() is not reliable for main content. Better to use an <img> tag. 
@@ -232,7 +260,6 @@
             background-repeat: no-repeat;
             background-size: contain;
             position: absolute;
-            z-index: 999;
             width: 500px; /* Example size */
             height: 250px; /* Example size */
             top: 30%;

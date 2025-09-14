@@ -75,11 +75,13 @@ class MinecraftMii {
       bubble(bubbleX, bubbleY, this);
       this.scaleHead(1.3);
       this.head.rotation.set(-0.5, 0, 0);
-
-
+      let audio = new Audio(`../media/sounds/Select.wav`);
+      audio.play();
   }
 
   unselect() {
+    let audio = new Audio(`../media/sounds/Unselect.wav`);
+    audio.play();
     this.scaleHead(1);
     this.wander(true);
   }

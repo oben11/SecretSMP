@@ -1,5 +1,6 @@
 // main.js (ES Module)
 import { MinecraftMii } from "./mii.js";
+import FancyButton from "./Fancybutton.js";
 import axios from "axios";
 
 // Utility function
@@ -15,7 +16,6 @@ function getRandomInt(min, max) {
 }
 
 let miiInstances = {}; // Needs to be in module scope for export to work
-let returnToStartPosition = () => {}; // Declare now, define later
 
 document.addEventListener("DOMContentLoaded", function () {
   const maxMiis = 5;
@@ -59,9 +59,31 @@ document.addEventListener("DOMContentLoaded", function () {
 
 });
 
+const goathorn = new FancyButton({
+  objPath: "../media/goathorn.obj",
+  mtlPath: "../media/goathorn.mtl",
+  id:"goathorn"
+});
+goathorn.setOnClick(() => {
+  var audio = new Audio('../media/goathorn.mp3');
+  returnToStartPosition(); // Call the function to return all Miis to their starting positions
+  audio.play();
+});
+
+const map = new FancyButton({
+  objPath: "../media/3dmap.obj",
+  mtlPath: "../media/3dmap.mtl",
+  id: "map"
+});
+map.setOnClick(() => {
+  var audio = new Audio('../media/goathorn.mp3');
+  returnToStartPosition(); // Call the function to return all Miis to their starting positions
+  audio.play();
+});
+
 
 // Example exportable function to reset all Miis
-returnToStartPosition = () => {
+function returnToStartPosition() {
   for (const canvasId in miiInstances) {
     if (Object.hasOwn(miiInstances, canvasId)) {
       miiInstances[canvasId].stopWander();
@@ -69,5 +91,3 @@ returnToStartPosition = () => {
     }
   }
 };
-
-export { returnToStartPosition };

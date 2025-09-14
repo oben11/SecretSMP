@@ -9,8 +9,10 @@
     <link rel="icon" href="favicon.png">
         <!--// TODO: need to checkup on these scripts-->
     
-        <script type="module" src="./scripts/mosaic.js"></script> 
+    <script type="module" src="./scripts/mii-display.js"></script> 
     <script type="module" src="./scripts/pageTransition.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>    
+
     
    
 
@@ -19,23 +21,24 @@
     <div id="overlay" class="overlay"> </div>
 
     <div class="content-wrapper">
+    <img class = "miiDisplayBackground"></img>
+    <div class="miiDisplay" id = "miiDisplay"></div>
 
-        <div class="mii-display">
-          <div id="mosaic"></div>
-        </div>
+
         <div class="logo"></div>
-        <div class="footer"></div>
+        <div class="footer">
+            <p href = "channel.html"><button id="toggleButton" class="wii-button light-mode">Start</button></p>
+        </div>
         <div class="gradient"> </div>
         <div class="scanlines"></div>
 
-        <div class="buttons">
-            <p href = "channel.html"><button id="toggleButton" class="wii-button light-mode">Start</button></p>
-        </div>
 
         
         <div class="secret-smp-container">
         <div class="secret-smp-text">Secret SMP<sup>®</sup></div>
     </div>
+
+        
 
     </body>
 </html>
