@@ -107,7 +107,7 @@ body {
             background: #ffffff;
             border-radius: 9999px; /* This makes the edges half-circles while the top and bottom remain straight lines */
             padding: 24px;
-            width: 100px;
+            min-width: 100px;
             box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.1);
         }
 

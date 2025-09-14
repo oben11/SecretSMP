@@ -5,11 +5,14 @@ import axios from 'axios';
   // --- This section remains the same ---
   const skinViewer = new skinview3d.SkinViewer({
     renderPaused: true,
-    width: 100,  // Explicitly set a render width
+    width:200,  // Explicitly set a render width
     height: 200, // Explicitly set a render height
   });
-  skinViewer.camera.position.y = 15;
-  skinViewer.camera.rotation.set(-0.1, 0, 0);
+  skinViewer.zoom = 1;
+  skinViewer.camera.position.y;;
+  //skinViewer.camera.rotation.set(-0.1, 0, 0);
+
+  
 
   let perRow = 15; // Initial Characters per row
   let rowIndex = 0;
@@ -37,8 +40,8 @@ import axios from 'axios';
   currentRow.className = 'image-row';
   host.appendChild(currentRow);
 
-
-  for (let i = 0; i < 100; i++) {
+for (let i = 0; i < 10; i++) {
+  for (let i = 0; i < perRow; i++) {
     // Check if we need to start a NEW row.
     if (rowIndex === perRow) {
       rowIndex = 0;
@@ -47,6 +50,7 @@ import axios from 'axios';
       // Create a new div for the new row and append it.
       currentRow = document.createElement('div');
       currentRow.className = 'image-row';
+      currentRow.style.zIndex = perRow;
       host.appendChild(currentRow);
     }
 
@@ -54,10 +58,11 @@ import axios from 'axios';
     const skinLink = skins[idx];
 
     // Random Character Pose
+     
     skinViewer.playerObject.skin.head.rotation.y = Math.random() * 0.9 - 0.6;
     skinViewer.playerObject.skin.head.rotation.x = Math.random() * 0.6 - 0.3;
     skinViewer.playerObject.skin.position.y = Math.random() * (5 - 0.8) + 0.5;
-
+    
     await skinViewer.loadSkin(skinLink);
     skinViewer.render();
 
@@ -69,7 +74,6 @@ import axios from 'axios';
     // We only need one class now! CSS handles the rest.
     imgElement.className = 'Mii';
     imgContainer.className = 'imgContainer'; // Container for each Mii image
-
     
     // Append the new image to the CURRENT row container.
     currentRow.appendChild(imgContainer);
@@ -77,6 +81,7 @@ import axios from 'axios';
 
     rowIndex++;
   }
+}
 
   skinViewer.dispose();
 

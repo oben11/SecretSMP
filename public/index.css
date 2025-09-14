@@ -26,6 +26,7 @@
         /* This is the main content container, which now holds all the new elements.
            It takes the place of the old body styling. */
         .content-wrapper {
+            z-index: 999;
             width: 100%;
             height: 100%;
             background-color: #fffcfc;
@@ -137,6 +138,8 @@
         }
 
         .scanlines {
+            z-index: 999;
+
             position: absolute; /* Changed to absolute */
             top: 0;
             left: 0;
@@ -180,6 +183,8 @@
         }
 
         .footer {
+            z-index: 98;
+
             position: absolute; /* Changed to absolute */
             bottom: 0;
             left: 0;
@@ -195,7 +200,7 @@
         /* The main container for all the rows */
 #miiDisplay {
   position: absolute;      /* Take out of normal flow and position relative to nearest positioned ancestor */
-  bottom: 50%;               /* Stick to the bottom */
+  bottom: 40%;               /* Stick to the bottom */
   left: 0;                 /* Align to the left edge */
   width: 100%;
   display: flex;           /* Use flexbox for layout */
@@ -206,6 +211,7 @@
 .image-row {
   display: flex; /* This makes the images line up horizontally */
   width: 100%;
+  height: 20px;;
   line-height: 0; /* Fixes potential small gaps under images */
 }
 
@@ -224,12 +230,14 @@
 }
 
 .Mii {
-      border:#000000 2px solid;
 
     position: absolute;
     width: 100px;
     height: 200px;
     z-index: inherit;
+
+      object-fit: cover;
+  object-position: 50% 200%;
 }
 
         .miiDisplayBackground {
@@ -241,7 +249,7 @@
         }
 
         .gradient {
-            z-index: 5;
+            z-index: 995;
             position: static; /* Changed to absolute */
             top: 0;
             left: 0;
@@ -254,6 +262,8 @@
 
 
         .logo {
+                        z-index: 997;
+
             /* content:url() is not reliable for main content. Better to use an <img> tag. 
                This is a placeholder div for the logo style. */
             background-image: url("media/image.png"); /* Path to your logo image */

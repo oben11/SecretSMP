@@ -6,6 +6,10 @@ export function bubble(x,y, mii) {
     bubble.style.top = `${y}px`;
     document.body.appendChild(bubble);
 
+    const button = document.createElement('button');
+    button.textContent = 'X';
+    bubble.appendChild(button);
+
     onclick = () => {
         if (!enabled) return;
         enabled = false;
