@@ -17,47 +17,62 @@ function getRandomInt(min, max) {
 
 let miiInstances = {}; // Needs to be in module scope for export to work
 
-document.addEventListener("DOMContentLoaded", function () {
-  const maxMiis = 5;
+document.addEventListener("DOMContentLoaded", async function () {
+  const maxMiis = 14;
   let counter = 0;
   let wander = false; // Control flag
 
-  axios.get("/api/skins").then((res) => {
-    res.data.forEach((url) => {
-      if (counter >= maxMiis) return;
+  const res = await axios.get("/api/skins");
+  for (const url of res.data) {
+    if (counter >= maxMiis) break;
 
-      const match = url.match(/\/skin\/([^/]+)/);
-      const username = match ? match[1] : "unknown";
-      const canvasId = `miiCanvas-${username}`;
-      console.log(`Creating Mii instance for ${username}`);
+    const match = url.match(/\/skin\/([^/]+)/);
+    const username = match ? match[1] : "unknown";
+    const canvasId = `miiCanvas-${username}`;
+    console.log(`Creating Mii instance for ${username}`);
 
-      const myMii = new MinecraftMii(canvasId);
-      myMii.setSkin(url);
-      myMii.setSize(150, 200);
-      myMii.setZoom(1);
+    const myMii = new MinecraftMii(canvasId, url);
+    myMii.setSize(150, 200);
+    myMii.setZoom(1);
 
-      // Layout logic
-      const i = Object.keys(miiInstances).length;
-      const row = Math.floor(i / Math.floor(window.innerWidth / 150));
-      const col = i % Math.floor(window.innerWidth / 150);
+    // Layout logic
+    const i = Object.keys(miiInstances).length;
+    const row = Math.floor(i / Math.floor(window.innerWidth / 150));
+    const col = i % Math.floor(window.innerWidth / 150);
 
-      //myMii.canvas.style.left = `${col * 150}px`;
-      //myMii.canvas.style.top = `${row * 200}px`;
-      myMii.setStartPos(col * 150, row * 200);
+    myMii.setStartPos(col * 150, row * 200);
 
-      myMii.container.style.left = `${col * 150}px`;
-      myMii.container.style.top = `${row * 200}px`;
+    myMii.container.style.left = `${col * 150}px`;
+    myMii.container.style.top = `${row * 200}px`;
 
-      console.log(`Positioning Mii ${username} at (${col * 150}, ${row * 200})`);
+    console.log(`Positioning Mii ${username} at (${col * 150}, ${row * 200})`);
 
-      miiInstances[canvasId] = myMii;
-      //myMii.walk(500, 500);
-      myMii.wander(true); // Enable wandering
-      counter++;
-    });
-  });
+    miiInstances[canvasId] = myMii;
 
+    
+    //
+
+    counter++;
+    await pause(20); // Add 20ms delay between each creation
+    
+    myMii.freezeMii(true); // Start frozen
+    //myMii.wander(true);
+
+  }
+  for (const canvasId in miiInstances) {
+  if (Object.hasOwn(miiInstances, canvasId)) {
+    await pause(100); // Stagger the start of wandering
+    miiInstances[canvasId].wander(true);
+    console.log(`Mii ${canvasId} started wandering`);
+  }
+}
 });
+
+
+
+
+
+
 
 const goathorn = new FancyButton({
   objPath: "../media/goathorn.obj",
@@ -76,9 +91,9 @@ const map = new FancyButton({
   id: "map"
 });
 map.setOnClick(() => {
-  var audio = new Audio('../media/goathorn.mp3');
-  returnToStartPosition(); // Call the function to return all Miis to their starting positions
-  audio.play();
+  //var audio = new Audio('../media/goathorn.mp3');
+  //returnToStartPosition(); // Call the function to return all Miis to their starting positions
+  //audio.play();
 });
 
 

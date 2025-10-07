@@ -163,7 +163,7 @@ export class FancyButton {
     this.container.appendChild(this.renderer.domElement);
 
     // Lights
-    this.scene.add(new THREE.AmbientLight(0xffffff, 0.5));
+    this.scene.add(new THREE.AmbientLight(0xffffff, 3.2));
     const dir = new THREE.DirectionalLight(0xffffff, 0.8);
     dir.position.set(1, 1, 1).normalize();
     this.scene.add(dir);

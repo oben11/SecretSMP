@@ -19,6 +19,7 @@
 }
 
 .miiCanvas {
+  border: rgba(12, 239, 255, 0.881) 2px dotted;
   position: absolute;
   border-radius: 1rem;
   z-index: 1;

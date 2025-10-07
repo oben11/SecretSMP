@@ -2,7 +2,7 @@ import * as skinview3d from 'skinview3d';
 import bubble from './bubble.js';
 
 class MinecraftMii {
-  constructor(canvasId) {
+  constructor(canvasId, skinUrl) {
     // parent container
     this.container = document.createElement('div');
     this.container.id = `${canvasId}-container`;
@@ -19,16 +19,19 @@ class MinecraftMii {
     this.container.appendChild(this.shadow);
 
     // three.js canvas scene
+    this.firstskin = skinUrl;
+    //console.log("Skin URL: " + this.firstskin);
+
     this.canvas = document.createElement('canvas');
+    this.canvasId = canvasId;
     this.canvas.id = canvasId;
     this.canvas.className = 'miiCanvas';
     this.container.appendChild(this.canvas);
 
-
-
     // Initialize SkinViewer
     this.viewer = new skinview3d.SkinViewer({
       canvas: this.canvas,
+      skin: skinUrl,
       zoom: 1,
       fov: 15,
       rotateButton: true,
@@ -52,9 +55,49 @@ class MinecraftMii {
     this.camera.rotation.set(-2, 0, 0);
  
     // Setup click interaction
-    this.canvas.addEventListener('click', () => this.onclick());
+    this.container.addEventListener('click', () => this.onclick());
   }
   
+  createMiiCanvas() {
+    console.log("Creating new canvas for " + this.container.id);
+    // Initialize SkinViewer
+
+    this.canvas = document.createElement('canvas');
+    this.canvas.id = this.canvasId;
+    this.canvas.className = 'miiCanvas';
+    this.container.appendChild(this.canvas);
+    this.viewer = new skinview3d.SkinViewer({
+      canvas: this.canvas,
+      skin: this.firstskin,
+      zoom: 1,
+      fov: 15,
+      rotateButton: true,
+      panButton: true,
+      //nameTag: canvasId,
+    });
+
+    // Disable default controls
+    this.viewer.controls.enableZoom = false;
+    this.viewer.controls.enableRotate = false;
+    this.viewer.controls.enablePan = false;
+
+    // Aliases for easier access
+    this.player = this.viewer.playerObject;
+    this.head = this.player.skin.head;
+    this.animations = this.viewer.animations;
+    this.camera = this.viewer.camera;
+
+    // Setup camera
+    this.camera.position.set(0, 15, 15);
+    this.camera.rotation.set(-2, 0, 0);
+    this.setZoom(1);
+    this.setSize(150, 200);
+
+ 
+    // Setup click interaction
+    this.canvas.addEventListener('click', () => this.onclick());
+
+  }
 
   // === EVENT REACTIONS ===
   onclick() {
@@ -109,6 +152,7 @@ class MinecraftMii {
   }
 
   setSkin(skinUrl) {
+    const lastSkin = skinUrl;
     this.viewer.loadSkin(skinUrl);
   }
 
@@ -141,10 +185,21 @@ class MinecraftMii {
   }
 
   
-
   dispose() {
-    this.viewer.dispose();
-    this.canvas.remove();
+    console.log("Disposing viewer for " + this.container.id);
+    this.viewer.renderPaused = true;
+    // Destroy WebGL context to avoid hitting the limit
+    if (this.viewer.renderer) {
+      const gl = this.viewer.renderer.getContext();
+      if (gl && typeof gl.getExtension === 'function') {
+        const ext = gl.getExtension('WEBGL_lose_context');
+        if (ext) ext.loseContext();
+      }
+      this.viewer.renderer.dispose();
+    }
+    if (this.canvas && this.canvas.parentNode === this.container) {
+      this.container.removeChild(this.canvas);
+    }
   }
 
   stareAtCursor() {
@@ -174,58 +229,77 @@ class MinecraftMii {
     }, 5000);
   }
 
-walk(x, y, speed = 5) {
-  return new Promise((resolve) => {
-    
-    anime.remove(this.container); // Stop current movement
-    const rect = this.container.getBoundingClientRect();
-    const currentX = rect.left;
-    const currentY = rect.top;
+  countactiveCanvases() {
+    return document.querySelectorAll('.miiCanvas').length;
+  }
 
-    console.log(`Walking from (${currentX}, ${currentY}) to (${x}, ${y})`);
+  walk(x, y, speed = 5) {
+    return new Promise((resolve) => {
+      const tryWalk = () => {
+        if (this.countactiveCanvases() > 12) {
+          console.log("Too many active canvases, delaying walk...");
+          //setTimeout(tryWalk, 500);
+          return;
+        }
 
-    if (currentX !== x || currentY !== y) {
-      this.Walking(true);
-      const newRotation = this.calculateRotation(x, y);
-      const duration = Math.hypot(currentX - x, currentY - y)  * speed;
-      console.log(`Walking duration: ${duration}ms`);
-      this.setRotation(newRotation, duration);
+        this.freezeMii(false);
+        anime.remove(this.container); // Stop current movement
+        const rect = this.container.getBoundingClientRect();
+        const currentX = rect.left;
+        const currentY = rect.top;
 
-      // Walking Noises      
-      if (this.soundTimer) {
-        clearInterval(this.soundTimer);
-        console.log("Clearing previous sound timer");
-        this.soundTimer = null;
-      }
-      const interval = 300+Math.floor(Math.random() * 200) + 1; // ms
-      this.soundTimer = setInterval(() => {
-        const randSound = Math.floor(Math.random() * 5) + 1;
-        const audio = new Audio(`../media/sounds/step${randSound}.mp3`);
-        audio.volume = 0.1;
-        audio.play();
-      }, interval);
+        console.log(`Walking from (${currentX}, ${currentY}) to (${x}, ${y})`);
 
-      // Walking movement
-      anime({
-        targets: this.container,
-        left: x,
-        top: y,
-        duration: duration,
-        easing: 'linear',
-        complete: () => {
-          clearInterval(this.soundTimer); // 🔇 Stop sounds
-          this.soundTimer = null; // Clear the timer reference
-          this.Walking(false);
-          this.player.rotation.y = newRotation;
-          this.animateCharacterRotation(0, 100);
-          resolve(); // ✅ Tell the caller it's done
-        },
-      });
-    } else {
-      resolve(); // ✅ Still resolve if already at destination
-    }
-  });
-}
+        if (currentX !== x || currentY !== y) {
+          this.Walking(true);
+          const newRotation = this.calculateRotation(x, y);
+          const duration = Math.hypot(currentX - x, currentY - y) * speed;
+          console.log(`Walking duration: ${duration}ms`);
+          this.setRotation(newRotation, duration);
+
+          // Walking Noises      
+          if (this.soundTimer) {
+            clearInterval(this.soundTimer);
+            console.log("Clearing previous sound timer");
+            this.soundTimer = null;
+          }
+          const interval = 300 + Math.floor(Math.random() * 200) + 1; // ms
+          this.soundTimer = setInterval(() => {
+            const randSound = Math.floor(Math.random() * 5) + 1;
+            const audio = new Audio(`../media/sounds/step${randSound}.mp3`);
+            audio.volume = 0.1;
+            audio.play();
+          }, interval);
+
+          // Walking movement
+          anime({
+            targets: this.container,
+            left: x,
+            top: y,
+            duration: duration,
+            easing: 'linear',
+            complete: () => {
+              clearInterval(this.soundTimer); // 🔇 Stop sounds
+              this.soundTimer = null; // Clear the timer reference
+              this.Walking(false);
+              this.player.rotation.y = newRotation;
+
+                this.animateCharacterRotation(0, 100);
+                setTimeout(() => {
+                this.freezeMii(true);
+                }, 100);
+               // Freeze at destination
+              resolve(); // ✅ Tell the caller it's done
+
+            },
+          });
+        } else {
+          resolve(); // ✅ Still resolve if already at destination
+        }
+      };
+      tryWalk();
+    });
+  }
 
 
 getrandomInt(min, max) {
@@ -256,10 +330,45 @@ stopWander() {
   this._wandering = false;
   clearTimeout(this._wanderTimeout);
   this._wanderTimeout = null;
+  
 }
 
+freezeMii(active) {
+  if (active) {
+    console.log("Freezing Mii and removing canvas for " + this.container.id);
+    this.viewer.render();
+    requestAnimationFrame(() => {
+      this.viewer.render();
+      const image = this.canvas.toDataURL('image/png');
+      const img = document.createElement('img');
+      img.src = image;
+      img.style.position = 'absolute';
+      img.style.width = this.canvas.width / 2 + 'px';
+      img.style.height = this.canvas.height / 2 + 'px';
+      //img.style.left = this.container.style.left;
+      //img.style.top = this.container.style.top;
+      img.className = 'miiFrozenImg';
+      this.container.appendChild(img);
+      this.img = img; // Store reference for later removal   
 
+      this.dispose();
+    });
+  } else {
+    // Remove the frozen image if it exists
+    this.dispose();
+    this.createMiiCanvas();
+    setTimeout(() => {
+          if (this.img && this.img.parentNode === this.container) {
+      this.container.removeChild(this.img);
+      this.img = null;
+    }
+    }, 20);
 
+  }
+}
+
+unfreezeMii() {
+}
 
     
 
