@@ -1,3 +1,4 @@
+
 .map {
   position: absolute;
   right: 5%;
@@ -19,7 +20,7 @@
 }
 
 .miiCanvas {
-  border: rgba(12, 239, 255, 0.881) 2px dotted;
+  /*border: rgba(12, 239, 255, 0.881) 2px dotted;*/
   position: absolute;
   border-radius: 1rem;
   z-index: 1;
@@ -41,6 +42,8 @@ html,
 body {
   height: 100%;
   cursor: url("./media/cursor.png") 16 16, pointer;
+  background-image: url("./media/backdrop.png");
+  background-size: cover;
 }
 
 
@@ -99,6 +102,26 @@ body {
   transition: top 0.5s ease-in;
   z-index: 9999;
 }
+
+#map-container {
+  z-index: 10;
+  position: absolute;
+  top:75%;
+  left: 75%;
+
+
+}
+
+#goathorn-container {
+  z-index: 10;
+  position: absolute;
+  top:60%;
+  left: 85%;
+
+
+}
+
+
 
 
         .bubble {

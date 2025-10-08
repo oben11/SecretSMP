@@ -10,7 +10,7 @@ export class FancyButton {
    * @param {string} opts.mtlPath - Path to the .mtl
    * @param {string} [opts.id] - Optional ID for the container
    * @param {HTMLElement|string} [opts.container] - Element or selector to mount into
-   * @param {number} [opts.scale=10] - Base scale for the model
+   * @param {number} [opts.scale=100] - Base scale for the model
    * @param {number} [opts.maxTiltAngle=0.05] - Radians
    * @param {number} [opts.scaleLerp=0.1] - 0..1
    * @param {number} [opts.rotationLerp=0.05] - 0..1
@@ -22,6 +22,7 @@ export class FancyButton {
       objPath,
       mtlPath,
       container,
+      id,
       scale = 5,
       maxTiltAngle = 0.5,
       scaleLerp = 0.1,
@@ -37,6 +38,7 @@ export class FancyButton {
     this.objPath = objPath;
     this.mtlPath = mtlPath;
     this.audioSrc = audioSrc;
+    this.id = id || 'FancyButton';
 
     // Scene bits
     this.scene = null;
@@ -135,8 +137,8 @@ export class FancyButton {
       throw new Error("FancyButton: container not found and appendIfMissing=false.");
     }
     const el = document.createElement("div");
-    el.style.width = "300px";
-    el.style.height = "300px";
+    el.style.width = "150px";
+    el.style.height = "150px";
     el.style.position = "relative";
     el.style.display = "inline-block";
     el.style.touchAction = "none";
@@ -152,7 +154,7 @@ export class FancyButton {
 
     // Camera
     const { width, height } = this._containerSize();
-    this.camera = new THREE.PerspectiveCamera(30, width / height, 0.1, 1000);
+    this.camera = new THREE.PerspectiveCamera(15, width / height, 0.1, 1000);
     this.camera.position.z = 30;
     this.camera.position.y = 2;
 

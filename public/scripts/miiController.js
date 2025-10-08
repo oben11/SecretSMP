@@ -57,16 +57,24 @@ document.addEventListener("DOMContentLoaded", async function () {
     
     myMii.freezeMii(true); // Start frozen
     //myMii.wander(true);
-
   }
-  for (const canvasId in miiInstances) {
+
+  wanderMiis();
+
+
+});
+
+
+async function wanderMiis() {
+for (const canvasId in miiInstances) {
   if (Object.hasOwn(miiInstances, canvasId)) {
-    await pause(100); // Stagger the start of wandering
+    await pause(200); // Stagger the start of wandering
     miiInstances[canvasId].wander(true);
     console.log(`Mii ${canvasId} started wandering`);
   }
 }
-});
+
+}
 
 
 
@@ -79,10 +87,19 @@ const goathorn = new FancyButton({
   mtlPath: "../media/goathorn.mtl",
   id:"goathorn"
 });
+let goathornActive = false;
 goathorn.setOnClick(() => {
-  var audio = new Audio('../media/goathorn.mp3');
-  returnToStartPosition(); // Call the function to return all Miis to their starting positions
-  audio.play();
+    goathornActive = !goathornActive;
+    if (goathornActive) {
+      var audio = new Audio('../media/goathorn.mp3');
+      returnToStartPosition(); // Call the function to return all Miis to their starting positions
+      audio.play();
+    } else {
+      wanderMiis();
+      // Stop the sound if needed
+    }
+
+
 });
 
 const map = new FancyButton({
@@ -98,9 +115,10 @@ map.setOnClick(() => {
 
 
 // Example exportable function to reset all Miis
-function returnToStartPosition() {
+async function returnToStartPosition() {
   for (const canvasId in miiInstances) {
     if (Object.hasOwn(miiInstances, canvasId)) {
+      await pause(100); // Stagger the return
       miiInstances[canvasId].stopWander();
       miiInstances[canvasId].returnToStartPos();
     }

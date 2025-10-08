@@ -10,12 +10,26 @@ export function bubble(x,y, mii) {
     button.textContent = 'X';
     bubble.appendChild(button);
 
-    onclick = () => {
+    const onDocClick = (e) => {
+        if (!enabled) return;
+        if (!bubble.contains(e.target)) {
+            enabled = false;
+            document.removeEventListener('click', onDocClick);
+            bubble.remove();
+            mii.unselect();
+        }
+    };
+
+    button.addEventListener('click', (e) => {
         if (!enabled) return;
         enabled = false;
+        document.removeEventListener('click', onDocClick);
         bubble.remove();
         mii.unselect();
-    }
+        e.stopPropagation();
+    });
+
+    document.addEventListener('click', onDocClick);
 
 }
 
