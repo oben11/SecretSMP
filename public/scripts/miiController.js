@@ -83,8 +83,8 @@ for (const canvasId in miiInstances) {
 
 
 const goathorn = new FancyButton({
-  objPath: "../media/goathorn.obj",
-  mtlPath: "../media/goathorn.mtl",
+  objPath: "../media/models/goathorn.obj",
+  mtlPath: "../media/models/goathorn.mtl",
   id:"goathorn"
 });
 let goathornActive = false;
@@ -98,13 +98,11 @@ goathorn.setOnClick(() => {
       wanderMiis();
       // Stop the sound if needed
     }
-
-
 });
 
 const map = new FancyButton({
-  objPath: "../media/3dmap.obj",
-  mtlPath: "../media/3dmap.mtl",
+  objPath: "../media/models/3dmap.obj",
+  mtlPath: "../media/models/3dmap.mtl",
   id: "map"
 });
 map.setOnClick(() => {

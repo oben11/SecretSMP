@@ -1,4 +1,22 @@
 
+.custom-cursor {
+  position: fixed;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+  z-index: 9999;
+  transform: translate(-50%, -50%);
+}
+
+
+.cursor-image {
+  image-rendering: pixelated;
+  width: 86px; /* Adjust size as needed */
+  height: 86px; /* Adjust size as needed */
+  user-select: none;
+
+}
+
 .map {
   position: absolute;
   right: 5%;
@@ -41,7 +59,7 @@
 html,
 body {
   height: 100%;
-  cursor: url("./media/cursor.png") 16 16, pointer;
+  cursor: none;
   background-image: url("./media/backdrop.png");
   background-size: cover;
 }

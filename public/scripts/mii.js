@@ -277,11 +277,12 @@ class MinecraftMii {
               this.soundTimer = null; // Clear the timer reference
               this.Walking(false);
               this.player.rotation.y = newRotation;
-
-              this.animateCharacterRotation(0, 100);
+              let randomSpeed = this.getrandomInt(50, 500);
+              let randomRotation = this.getrandomInt();
+              this.animateCharacterRotation(randomRotation, randomSpeed); // Smoothly face forward
               setTimeout(() => {
                 this.freezeMii(true);
-              }, 100);
+              }, randomSpeed);
               // Freeze at destination
               resolve(); // ✅ Tell the caller it's done
             },
