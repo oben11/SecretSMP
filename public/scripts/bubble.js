@@ -4,7 +4,7 @@ export function bubble(x,y, mii) {
     bubble.className = 'bubble';
     bubble.style.left = `${x}px`;
     bubble.style.top = `${y}px`;
-    document.body.appendChild(bubble);
+    mii.container.appendChild(bubble);
 
     const button = document.createElement('button');
     button.textContent = 'X';

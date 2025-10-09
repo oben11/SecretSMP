@@ -2,6 +2,9 @@
 import { MinecraftMii } from "./mii.js";
 import FancyButton from "./Fancybutton.js";
 import axios from "axios";
+import { init as initZoomPanning } from './pan.js';
+
+
 
 // Utility function
 function pause(milliseconds) {
@@ -18,7 +21,8 @@ function getRandomInt(min, max) {
 let miiInstances = {}; // Needs to be in module scope for export to work
 
 document.addEventListener("DOMContentLoaded", async function () {
-  const maxMiis = 14;
+  initZoomPanning();
+  const maxMiis = 30;
   let counter = 0;
   let wander = false; // Control flag
 
@@ -28,12 +32,12 @@ document.addEventListener("DOMContentLoaded", async function () {
 
     const match = url.match(/\/skin\/([^/]+)/);
     const username = match ? match[1] : "unknown";
-    const canvasId = `miiCanvas-${username}`;
+    const canvasId = `${username}`;
     console.log(`Creating Mii instance for ${username}`);
 
     const myMii = new MinecraftMii(canvasId, url);
     myMii.setSize(150, 200);
-    myMii.setZoom(1);
+    //myMii.setZoom(1);
 
     // Layout logic
     const i = Object.keys(miiInstances).length;
@@ -53,7 +57,7 @@ document.addEventListener("DOMContentLoaded", async function () {
     //
 
     counter++;
-    await pause(20); // Add 20ms delay between each creation
+    await pause(100); // Add 20ms delay between each creation
     
     myMii.freezeMii(true); // Start frozen
     //myMii.wander(true);

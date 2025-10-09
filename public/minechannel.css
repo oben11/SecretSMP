@@ -27,6 +27,17 @@
 }
 
 
+#content-container {
+  position:absolute;
+  border: solid red 2px;
+  width: 100vw;
+  height:90vh;
+  transform-origin: center center;
+  transition: transform 0.05s linear; /* Small transition for responsiveness */
+
+}
+
+
 .miiContainer {
   position: relative;       /* crucial so left/top animate */
   width: 150px;
@@ -58,9 +69,9 @@
 
 html,
 body {
+  overflow: hidden;
   height: 100%;
   cursor: none;
-  background-image: url("./media/backdrop.png");
   background-size: cover;
 }
 

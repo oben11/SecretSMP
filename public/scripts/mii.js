@@ -1,5 +1,7 @@
 import * as skinview3d from "skinview3d";
 import bubble from "./bubble.js";
+import { highlight, unhighlight } from './pan.js';
+
 
 class MinecraftMii {
   constructor(canvasId, skinUrl) {
@@ -10,7 +12,7 @@ class MinecraftMii {
 
     // starting position (so anime has something to animate from)
     this.container.style.position = "absolute";
-    document.body.appendChild(this.container);
+    document.getElementById("content-container").appendChild(this.container);
 
     // shadow element
     this.shadow = document.createElement("div");
@@ -21,54 +23,22 @@ class MinecraftMii {
     this.firstskin = skinUrl;
     //console.log("Skin URL: " + this.firstskin);
 
-    this.canvas = document.createElement("canvas");
-    this.canvasId = canvasId;
-    this.canvas.id = canvasId;
-    this.canvas.className = "miiCanvas";
-    this.container.appendChild(this.canvas);
-
-    // Initialize SkinViewer
-    this.viewer = new skinview3d.SkinViewer({
-      canvas: this.canvas,
-      skin: skinUrl,
-      zoom: 1,
-      fov: 15,
-      rotateButton: true,
-      panButton: true,
-      //nameTag: canvasId,
-    });
-
-    // Disable default controls
-    this.viewer.controls.enableZoom = false;
-    this.viewer.controls.enableRotate = false;
-    this.viewer.controls.enablePan = false;
-
-    // Aliases for easier access
-    this.player = this.viewer.playerObject;
-    this.head = this.player.skin.head;
-    this.animations = this.viewer.animations;
-    this.camera = this.viewer.camera;
-
-    // Setup camera
-    this.camera.position.set(0, 15, 15);
-    this.camera.rotation.set(-2, 0, 0);
-
+    this.createMiiCanvas();
     // Setup click interaction
     this.container.addEventListener("click", () => this.onclick());
   }
 
   createMiiCanvas() {
+    return new Promise((resolve) => {
     console.log("Creating new canvas for " + this.container.id);
     // Initialize SkinViewer
-
     this.canvas = document.createElement("canvas");
-    this.canvas.id = this.canvasId;
+    this.canvas.id = this.canvasId + "-container";
     this.canvas.className = "miiCanvas";
     this.container.appendChild(this.canvas);
     this.viewer = new skinview3d.SkinViewer({
       canvas: this.canvas,
       skin: this.firstskin,
-      zoom: 1,
       fov: 15,
       rotateButton: true,
       panButton: true,
@@ -87,13 +57,13 @@ class MinecraftMii {
     this.camera = this.viewer.camera;
 
     // Setup camera
-    this.camera.position.set(0, 15, 15);
-    this.camera.rotation.set(-2, 0, 0);
-    this.setZoom(1);
+    this.camera.position.set(0, 12, 15);
+    //this.camera.rotation.set(-20, 0, 0);
+    this.setZoom(0.95);
     this.setSize(150, 200);
-
-    // Setup click interaction
-    this.canvas.addEventListener("click", () => this.onclick());
+    resolve();
+  });
+  
   }
 
   // === EVENT REACTIONS ===
@@ -107,27 +77,36 @@ class MinecraftMii {
 
   selected() {
     this.freezeMii(false);
-    this.setRotation(0, 100);
+    this.animateCharacterRotation(0, 100);
     this.cancelAnimation();
     this.stopWander();
-    const rect = this.container.getBoundingClientRect();
-    const bubbleX = rect.left;
-    const bubbleY = rect.top - 60;
+    const bubbleX = 0;
+    const bubbleY = -60;
+    //const bubbleX = rect.left;
+    //const bubbleY = rect.top - 60;
     bubble(bubbleX, bubbleY, this);
     this.scaleHead(1.3);
     this.head.rotation.set(-0.5, 0, 0);
     let audio = new Audio(`../media/sounds/Select.wav`);
     audio.play();
+      const rect = this.container.getBoundingClientRect();
+      const x = rect.left + rect.width / 2;
+      const y = rect.top + rect.height / 2;
+
+    highlight(this.container.id, 1.5, 0);
   }
 
   unselect() {
+    unhighlight();
     let audio = new Audio(`../media/sounds/Unselect.wav`);
     audio.play();
     //bubble.remove();
 
     this.scaleHead(1);
     this.wander(true);
+
   }
+
 
 
 
@@ -191,6 +170,7 @@ class MinecraftMii {
     }
     if (this.canvas && this.canvas.parentNode === this.container) {
       this.container.removeChild(this.canvas);
+
     }
   }
 
@@ -225,7 +205,7 @@ class MinecraftMii {
     return document.querySelectorAll(".miiCanvas").length;
   }
 
-  walk(x, y, speed = 5) {
+  walk(x, y, speed = 5, endRadians = 0) {
     return new Promise((resolve) => {
       const tryWalk = () => {
         if (this.countactiveCanvases() > 12) {
@@ -233,9 +213,10 @@ class MinecraftMii {
           //setTimeout(tryWalk, 500);
           return;
         }
-        this.freezeMii(false);
         //if (this.Walking !== true) {
         //}
+        this.freezeMii(false);
+
         anime.remove(this.container); // Stop current movement
         const rect = this.container.getBoundingClientRect();
         const currentX = rect.left;
@@ -247,7 +228,7 @@ class MinecraftMii {
           this.Walking(true);
           const newRotation = this.calculateRotation(x, y);
           const duration = Math.hypot(currentX - x, currentY - y) * speed;
-          this.setRotation(newRotation, duration);
+          this.animateCharacterRotation(newRotation, duration);
 
           // Walking Noises
           if (this.soundTimer) {
@@ -274,9 +255,8 @@ class MinecraftMii {
               this.soundTimer = null; // Clear the timer reference
               this.Walking(false);
               this.player.rotation.y = newRotation;
-              let randomSpeed = this.getrandomInt(50, 500);
-              let randomRotation = this.getrandomInt();
-              this.animateCharacterRotation(randomRotation, randomSpeed); // Smoothly face forward
+              let randomSpeed = this.getrandomInt(120, 600);            
+              this.animateCharacterRotation(endRadians, randomSpeed); // Smoothly face forward
               setTimeout(() => {
                 this.freezeMii(true);
               }, randomSpeed);
@@ -305,10 +285,11 @@ class MinecraftMii {
     this._wandering = true;
     const step = () => {
       if (!this._wandering) return;
-      let bounding = document.body.getBoundingClientRect();
-      const x = this.getrandomInt(100, bounding.width - 100);
-      const y = this.getrandomInt(100, bounding.height - 100);
-      this.walk(x, y).then(() => {
+      let bounding = document.getElementById("content-container").getBoundingClientRect();
+      const x = this.getrandomInt(0, bounding.width - 300);
+      const y = this.getrandomInt(0, bounding.height - 300);
+      let randomRadian =  1.5 + this.getrandomInt(4, 5)+ this.getrandomInt(2,7)/10;
+      this.walk(x, y, 5, randomRadian).then(() => {
         if (!this._wandering) return;
         this._wanderTimeout = setTimeout(step, this.getrandomInt(2000, 10000));
       });
@@ -342,15 +323,18 @@ class MinecraftMii {
         img.className = "miiFrozenImg";
         this.container.appendChild(img);
         this.img = img; // Store reference for later removal
-
         this.dispose();
         this._frozen = true;
       });
     } else {
       // Remove the frozen image if it exists
       this.dispose();
-      this.createMiiCanvas();
-      this.disposeImage();
+      this.createMiiCanvas().then(() => {
+        this.disposeImage();
+      });
+
+
+      
       this._frozen = false;
     }
   }
