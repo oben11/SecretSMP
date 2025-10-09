@@ -169,9 +169,6 @@ class MinecraftMii {
     this.viewer.render();
   }
 
-  setRotation(degrees, duration) {
-    this.animateCharacterRotation(degrees, duration);
-  }
 
   Walking(active) {
     const lockedY = this.player.rotation.y;
