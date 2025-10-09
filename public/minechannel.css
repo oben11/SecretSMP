@@ -29,9 +29,8 @@
 
 #content-container {
   position:absolute;
-  border: solid red 2px;
   width: 100vw;
-  height:90vh;
+  height:80vh;
   transform-origin: center center;
   transition: transform 0.05s linear; /* Small transition for responsiveness */
 

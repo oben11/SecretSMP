@@ -36,7 +36,6 @@ document.addEventListener("DOMContentLoaded", async function () {
     console.log(`Creating Mii instance for ${username}`);
 
     const myMii = new MinecraftMii(canvasId, url);
-    myMii.setSize(150, 200);
     //myMii.setZoom(1);
 
     // Layout logic
@@ -58,7 +57,6 @@ document.addEventListener("DOMContentLoaded", async function () {
 
     counter++;
     await pause(100); // Add 20ms delay between each creation
-    
     myMii.freezeMii(true); // Start frozen
     //myMii.wander(true);
   }
@@ -120,7 +118,7 @@ map.setOnClick(() => {
 async function returnToStartPosition() {
   for (const canvasId in miiInstances) {
     if (Object.hasOwn(miiInstances, canvasId)) {
-      await pause(100); // Stagger the return
+      //await pause(100); // Stagger the return
       miiInstances[canvasId].stopWander();
       miiInstances[canvasId].returnToStartPos();
     }

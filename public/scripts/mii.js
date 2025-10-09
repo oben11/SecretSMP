@@ -36,12 +36,16 @@ class MinecraftMii {
     this.canvas.id = this.canvasId + "-container";
     this.canvas.className = "miiCanvas";
     this.container.appendChild(this.canvas);
+
     this.viewer = new skinview3d.SkinViewer({
+      width: 150,
+      height: 200,
       canvas: this.canvas,
       skin: this.firstskin,
       fov: 15,
       rotateButton: true,
       panButton: true,
+
       //nameTag: canvasId,
     });
 
@@ -60,7 +64,6 @@ class MinecraftMii {
     this.camera.position.set(0, 12, 15);
     //this.camera.rotation.set(-20, 0, 0);
     this.setZoom(0.95);
-    this.setSize(150, 200);
     resolve();
   });
   
@@ -116,7 +119,9 @@ class MinecraftMii {
   }
 
   returnToStartPos() {
-    this.walk(this.startPosition.x, this.startPosition.y, 2);
+    this.wander(false);
+    this.freezeMii(true);
+    //this.walk(this.startPosition.x, this.startPosition.y, 2);
   }
 
   cancelAnimation() {
@@ -208,9 +213,9 @@ class MinecraftMii {
   walk(x, y, speed = 5, endRadians = 0) {
     return new Promise((resolve) => {
       const tryWalk = () => {
-        if (this.countactiveCanvases() > 12) {
+        if (this.countactiveCanvases() > 5) {
           console.log("Too many active canvases, delaying walk...");
-          //setTimeout(tryWalk, 500);
+          //setTimeout(tryWalk, 2000);
           return;
         }
         //if (this.Walking !== true) {
@@ -308,6 +313,7 @@ class MinecraftMii {
     if (active === this._frozen) return;
 
     if (active) {
+      this.cancelAnimation();
       console.log("Freezing Mii and removing canvas for " + this.container.id);
       this.viewer.render();
       requestAnimationFrame(() => {

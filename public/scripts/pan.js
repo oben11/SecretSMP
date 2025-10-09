@@ -145,8 +145,8 @@ export const highlight = (elementId, zoom, sens) => {
   const distX = elementCenterX - viewportW / 2;
   const distY = elementCenterY - viewportH / 2;
   
-  targetPanX = (-distX / ZOOM_LEVEL) + currentPanX * (ZOOM_LEVEL / 1.5);
-  targetPanY = (-distY / ZOOM_LEVEL) + currentPanY * (ZOOM_LEVEL / 1.5);
+  targetPanX = (-distX / ZOOM_LEVEL) + currentPanX * (ZOOM_LEVEL / 1.2);
+  targetPanY = (-distY / ZOOM_LEVEL) + currentPanY * (ZOOM_LEVEL / 1.2);
 };
 
 // New function to re-enable mouse listening
