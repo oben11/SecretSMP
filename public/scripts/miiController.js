@@ -18,13 +18,12 @@ function getRandomInt(min, max) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
-let miiInstances = {}; // Needs to be in module scope for export to work
+let miiInstances = []; // Needs to be in module scope for export to work
 
 document.addEventListener("DOMContentLoaded", async function () {
   initZoomPanning();
   const maxMiis = 30;
   let counter = 0;
-  let wander = false; // Control flag
 
   const res = await axios.get("/api/skins");
   for (const url of res.data) {
@@ -50,7 +49,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 
     console.log(`Positioning Mii ${username} at (${col * 150}, ${row * 200})`);
 
-    miiInstances[canvasId] = myMii;
+    miiInstances.push(myMii);
 
     
     //
@@ -68,12 +67,10 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 
 async function wanderMiis() {
-for (const canvasId in miiInstances) {
-  if (Object.hasOwn(miiInstances, canvasId)) {
+for (i in miiInstances) {
     await pause(200); // Stagger the start of wandering
-    miiInstances[canvasId].wander(true);
-    console.log(`Mii ${canvasId} started wandering`);
-  }
+    i.wander(true);
+    //console.log(`Mii ${canvasId} started wandering`);
 }
 
 }
@@ -118,7 +115,7 @@ map.setOnClick(() => {
 async function returnToStartPosition() {
   for (const canvasId in miiInstances) {
     if (Object.hasOwn(miiInstances, canvasId)) {
-      //await pause(100); // Stagger the return
+      await pause(100); // Stagger the return
       miiInstances[canvasId].stopWander();
       miiInstances[canvasId].returnToStartPos();
     }

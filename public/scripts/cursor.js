@@ -43,7 +43,7 @@ document.addEventListener('DOMContentLoaded', () => {
         //let deg = 30;
         if (dx <= 0 && (cursorRotation >= -35 * (Math.PI / 180))) {
             cursorRotation += -1 * (Math.PI / 180);
-        } else if (dx >= 15 && (cursorRotation <= 0 * (Math.PI / 180))) {
+        } else if (dx >= 10 && (cursorRotation <= 0 * (Math.PI / 180))) {
             cursorRotation += 0.5 * (Math.PI / 180);
         }
         

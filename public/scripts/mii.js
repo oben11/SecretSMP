@@ -120,8 +120,8 @@ class MinecraftMii {
 
   returnToStartPos() {
     this.wander(false);
-    this.freezeMii(true);
-    //this.walk(this.startPosition.x, this.startPosition.y, 2);
+    //this.freezeMii(true);
+    this.walk(this.startPosition.x, this.startPosition.y, 2);
   }
 
   cancelAnimation() {
